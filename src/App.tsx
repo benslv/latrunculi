@@ -20,7 +20,37 @@ function App() {
   const handlePieceSelect = (row: number, column: number) => {
     if (board[row][column] !== null) {
       setSelectedPiece([row, column]);
+
+      getValidMoves(row, column);
     }
+  };
+
+  const getValidMoves = (row: number, column: number): Set<string> => {
+    const dy = [-1, 1];
+    const dx = [-1, 1];
+
+    const validMoves: Set<string> = new Set();
+
+    for (const y of dy) {
+      for (const x of dx) {
+        const posX = column + x;
+        const posY = row + y;
+
+        if (
+          0 <= posY &&
+          posY <= board.length &&
+          0 <= posX &&
+          posX <= board[posY].length &&
+          board[posY][posX] === null
+        ) {
+          validMoves.add([posY, posX].join("-"));
+        }
+      }
+    }
+
+    console.log(validMoves);
+
+    return validMoves;
   };
 
   return (
