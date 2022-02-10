@@ -20,7 +20,6 @@ export const Board = ({ board, handlePieceSelect }: BoardProps) => {
         row.map((_, i) => (
           <Square
             key={i}
-            color={(i + j) % 2 == 0 ? "light" : "dark"}
             val={board[j][i]}
             row={j}
             column={i}

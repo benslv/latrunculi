@@ -5,7 +5,7 @@ type CellProps = {
   color: "light" | "dark";
 };
 
-type SquareProps = CellProps & {
+type SquareProps = {
   val: number | null;
   row: number;
   column: number;
@@ -28,9 +28,11 @@ const Cell = styled.div<CellProps>`
   background-color: ${({ color }) => colours[color]};
 `;
 
-export const Square = ({ color, val, row, column, handlePieceSelect }: SquareProps) => {
+export const Square = ({ val, row, column, handlePieceSelect }: SquareProps) => {
   return (
-    <Cell color={color} onClick={() => handlePieceSelect(row, column)}>
+    <Cell
+      color={(row + column) % 2 == 0 ? "light" : "dark"}
+      onClick={() => handlePieceSelect(row, column)}>
       {val ? <Piece val={val} /> : null}
     </Cell>
   );
