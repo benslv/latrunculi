@@ -10,6 +10,7 @@ type SquareProps = {
   row: number;
   column: number;
   handlePieceSelect: (row: number, column: number) => void;
+  currentTurn: 1 | 2;
 };
 
 const colours = {
@@ -28,12 +29,12 @@ const Cell = styled.div<CellProps>`
   background-color: ${({ color }) => colours[color]};
 `;
 
-export const Square = ({ val, row, column, handlePieceSelect }: SquareProps) => {
+export const Square = ({ val, row, column, handlePieceSelect, currentTurn }: SquareProps) => {
   return (
     <Cell
       color={(row + column) % 2 == 0 ? "light" : "dark"}
       onClick={() => handlePieceSelect(row, column)}>
-      {val ? <Piece val={val} /> : null}
+      {val ? <Piece val={val} currentTurn={currentTurn} /> : null}
     </Cell>
   );
 };

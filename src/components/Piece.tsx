@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 type PieceProps = {
   val: number;
+  currentTurn: 1 | 2;
 };
 
 export const Piece = styled.div<PieceProps>`
@@ -13,5 +14,5 @@ export const Piece = styled.div<PieceProps>`
 
   box-shadow: 0 5px 10px #424242;
 
-  cursor: pointer;
+  cursor: ${({currentTurn, val}) => currentTurn === val ? "pointer" : "not-allowed"};
 `;
