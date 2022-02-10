@@ -15,12 +15,19 @@ const layout = [
 
 function App() {
   const [board, setBoard] = useState(layout);
-  const [selectedPiece, setSelectedPiece] = useState(null);
+  const [selectedPiece, setSelectedPiece] = useState<number[] | null>(null);
+
+  const handlePieceSelect = (row: number, column: number) => {
+    if (board[row][column] !== null) {
+      setSelectedPiece([row, column]);
+    }
+  };
 
   return (
     <div className="App">
       <h1>React Checkers</h1>
-      <Board board={board} />
+      <Board board={board} handlePieceSelect={handlePieceSelect} />
+      <p>Selected piece: {selectedPiece}</p>
     </div>
   );
 }
