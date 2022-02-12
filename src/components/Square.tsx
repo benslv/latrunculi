@@ -28,6 +28,8 @@ const Cell = styled.div<CellProps>`
   width: 80px;
   height: 80px;
 
+  cursor: ${({isMoveCandidate}) => isMoveCandidate ? "pointer": "default"};
+
   background-color: ${({ isMoveCandidate, color }) =>
     isMoveCandidate ? "#e0a802" : colours[color]};
 `;
