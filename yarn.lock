@@ -1036,6 +1036,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.13.10":
+  version "7.17.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.2.tgz#66f68591605e59da47523c631416b18508779941"
+  integrity sha512-hzeyJyMA1YGdJTuWU0e/j4wKXrU4OMFvY2MSlaI9B7VQb0r5cxTE3EAIS2Q7Tn2RIcDkRvTA/v2JsAEhxe99uw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@^7.16.7", "@babel/template@^7.3.3":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.16.7.tgz#8d126c8701fde4d66b264b3eba3d96f07666d155"
@@ -7568,6 +7575,13 @@ signal-exit@^3.0.2, signal-exit@^3.0.3:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.6.tgz#24e630c4b0f03fea446a2bd299e62b4a6ca8d0af"
   integrity sha512-sDl4qMFpijcGw22U5w63KmD3cZJfBuFlVNbVMKje2keoKML7X2UzWbc4XrmEbDwg0NXJc3yv4/ox7b+JWb57kQ==
+
+simpler-state@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/simpler-state/-/simpler-state-1.0.3.tgz#5490aa8719cb8453bbd01b40d1932a79342ba532"
+  integrity sha512-02I51XTnBsVqjnqn3fGG8MIfMhaZXdpZ7ODPYwBHw6+YXrHGStpH774ZMz0k8aXrfnJVJYDEnBcaMmtVJvSuOQ==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
 
 sisteransi@^1.0.5:
   version "1.0.5"
