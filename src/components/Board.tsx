@@ -39,26 +39,55 @@ export const Board = () => {
     }
   };
 
+  const getBlockers = (values: number[], pos: number, blocker: 1 | 2): [number, number] => {
+    // split into two lists either side of pos
+    // find max index of bad value in first list
+    // find min index of bad value in second list
+    // indicates all pieces beyond (and including it) are unreachable
+
+    const before = values.slice(0, pos).lastIndexOf(blocker);
+    const after = pos + 1 + values.slice(pos + 1).indexOf(blocker);
+
+    console.log(before, after);
+
+    return [before, after];
+  };
+
   const getValidMoves = (row: number, column: number): string[] => {
-    const dy = [-1, 1];
-    const dx = [-1, 1];
+    // moves like a rook in chess
+    // any square on same row/column until blocked by opponent piece
 
-    for (const y of dy) {
-      for (const x of dx) {
-        const posX = column + x;
-        const posY = row + y;
+    // Get board values for row and column of selected piece.
+    const vertical = board.map((row) => row[column]);
+    const horizontal = board[row];
 
-        if (
-          0 <= posY &&
-          posY <= board.length - 1 &&
-          0 <= posX &&
-          posX <= board[posY].length - 1 &&
-          board[posY][posX] === 0
-        ) {
-          GameState.addValidMove(posY, posX);
+    const opponentValue = currentTurn === 1 ? 2 : 1;
+
+    // Calculate the positions of the closest opponent pieces on both row and column.
+    const [vertBefore, vertAfter] = getBlockers(vertical, row, opponentValue);
+    const [horizBefore, horizAfter] = getBlockers(horizontal, column, opponentValue);
+
+    console.log("Vert:", vertBefore, vertAfter);
+    console.log("Horiz:", horizBefore, horizAfter);
+
+    // Determine the valid vertical and horizontal squares remaining.
+    vertical
+      .map((_, i) => {
+        if (i > vertBefore && i < vertAfter && i !== row) {
+          return i;
         }
-      }
-    }
+      })
+      .filter((val) => val !== undefined)
+      .forEach((i) => GameState.addValidMove(i as number, column));
+
+    horizontal
+      .map((_, i) => {
+        if (i > horizBefore && i < horizAfter && i !== column) {
+          return i;
+        }
+      })
+      .filter((i) => i !== undefined)
+      .forEach((i) => GameState.addValidMove(row, i as number));
 
     return validMoves;
   };
