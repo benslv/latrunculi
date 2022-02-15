@@ -4,7 +4,8 @@ export const currentTurn = entity(1);
 export const toggleTurn = () => currentTurn.set((curr) => (curr === 1 ? 2 : 1));
 
 export const selectedPiece = entity([-1, -1]);
-export const setSelectedPiece = (row: number, column: number) => selectedPiece.set([row, column]);
+export const setSelectedPiece = ([row, column]: [number, number]) =>
+  selectedPiece.set([row, column]);
 
 export const board = entity([
   [2, 0, 2, 0, 2, 0, 2, 0],

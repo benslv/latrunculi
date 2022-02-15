@@ -14,12 +14,13 @@ export const Board = () => {
   const board = GameState.board.use();
   const currentTurn = GameState.currentTurn.use();
   const validMoves = GameState.validMoves.use();
+  const selectedPiece = GameState.selectedPiece.use();
 
   const handleSquareClick = (row: number, column: number) => {
     switch (board[row][column]) {
       case currentTurn: {
-        setSelectedPiece([row, column]);
-        setValidMoves([]);
+        GameState.setSelectedPiece([row, column]);
+        GameState.resetValidMoves();
 
         return getValidMoves(row, column);
       }
@@ -30,8 +31,8 @@ export const Board = () => {
 
         console.log(`Move ${x} ${y} to ${column} ${row}`);
 
-        if (board[y][x] === currentTurn && isValidMove(row, column)) {
-          return makeMove(selectedPiece, [row, column], board[y][x]);
+        if (board[y][x] === currentTurn && GameState.isValidMove(row, column)) {
+          return GameState.makeMove(selectedPiece, [row, column], board[y][x]);
         }
       }
     }
@@ -51,14 +52,12 @@ export const Board = () => {
           posY <= board.length - 1 &&
           0 <= posX &&
           posX <= board[posY].length - 1 &&
-          board[posY][posX] === null
+          board[posY][posX] === 0
         ) {
           GameState.addValidMove(posY, posX);
         }
       }
     }
-
-    console.log(validMoves);
 
     return validMoves;
   };
