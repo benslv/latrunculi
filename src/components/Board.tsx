@@ -21,7 +21,7 @@ export const Board = () => {
 
       GameState.toggleTurn();
 
-      GameState.resetValidMoves();  
+      GameState.resetValidMoves();
       getValidMoves(row, column);
     }
   };
@@ -57,7 +57,7 @@ export const Board = () => {
       {board.map((row, j) =>
         row.map((_, i) => (
           <Square
-            key={i}
+            key={`${j}|${i}`}
             val={board[j][i]}
             row={j}
             column={i}

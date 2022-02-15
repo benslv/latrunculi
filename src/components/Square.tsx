@@ -28,7 +28,7 @@ const Cell = styled.div<CellProps>`
   width: 80px;
   height: 80px;
 
-  cursor: ${({isMoveCandidate}) => isMoveCandidate ? "pointer": "default"};
+  cursor: ${({ isMoveCandidate }) => (isMoveCandidate ? "pointer" : "default")};
 
   background-color: ${({ isMoveCandidate, color }) =>
     isMoveCandidate ? "#e0a802" : colours[color]};
@@ -36,9 +36,8 @@ const Cell = styled.div<CellProps>`
 
 export const Square = ({ val, row, column, handlePieceSelect }: SquareProps) => {
   const currentTurn = GameState.currentTurn.use();
-  const validMoves = GameState.validMoves.use();
 
-  const isMoveCandidate = validMoves.includes([row, column].join("-"));
+  const isMoveCandidate = GameState.isValidMove(row, column);
 
   return (
     <Cell
