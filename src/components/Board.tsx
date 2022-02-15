@@ -15,14 +15,25 @@ export const Board = () => {
   const currentTurn = GameState.currentTurn.use();
   const validMoves = GameState.validMoves.use();
 
-  const handlePieceSelect = (row: number, column: number) => {
-    if (board[row][column] === currentTurn) {
-      GameState.setSelectedPiece(row, column);
+  const handleSquareClick = (row: number, column: number) => {
+    switch (board[row][column]) {
+      case currentTurn: {
+        setSelectedPiece([row, column]);
+        setValidMoves([]);
 
-      GameState.toggleTurn();
+        return getValidMoves(row, column);
+      }
+      case 0: {
+        // And the square the clicked on is a valid move for that piece.
+        // Check that selected piece equals current player...
+        const [y, x] = selectedPiece;
 
-      GameState.resetValidMoves();
-      getValidMoves(row, column);
+        console.log(`Move ${x} ${y} to ${column} ${row}`);
+
+        if (board[y][x] === currentTurn && isValidMove(row, column)) {
+          return makeMove(selectedPiece, [row, column], board[y][x]);
+        }
+      }
     }
   };
 
@@ -61,7 +72,7 @@ export const Board = () => {
             val={board[j][i]}
             row={j}
             column={i}
-            handlePieceSelect={handlePieceSelect}
+            handleSquareClick={handleSquareClick}
           />
         )),
       )}

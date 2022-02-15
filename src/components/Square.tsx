@@ -12,7 +12,7 @@ type SquareProps = {
   val: number | null;
   row: number;
   column: number;
-  handlePieceSelect: (row: number, column: number) => void;
+  handleSquareClick: (row: number, column: number) => void;
 };
 
 const colours = {
@@ -34,7 +34,7 @@ const Cell = styled.div<CellProps>`
     isMoveCandidate ? "#e0a802" : colours[color]};
 `;
 
-export const Square = ({ val, row, column, handlePieceSelect }: SquareProps) => {
+export const Square = ({ val, row, column, handleSquareClick }: SquareProps) => {
   const currentTurn = GameState.currentTurn.use();
 
   const isMoveCandidate = GameState.isValidMove(row, column);
@@ -43,7 +43,7 @@ export const Square = ({ val, row, column, handlePieceSelect }: SquareProps) => 
     <Cell
       color={(row + column) % 2 == 0 ? "light" : "dark"}
       isMoveCandidate={isMoveCandidate}
-      onClick={() => handlePieceSelect(row, column)}>
+      onClick={() => handleSquareClick(row, column)}>
       {val ? <Piece val={val} currentTurn={currentTurn} /> : null}
     </Cell>
   );
