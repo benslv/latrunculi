@@ -29,10 +29,9 @@ export const Board = () => {
         // Check that selected piece equals current player...
         const [y, x] = selectedPiece;
 
-        console.log(`Move ${x} ${y} to ${column} ${row}`);
-
         if (board[y][x] === currentTurn && GameState.isValidMove(row, column)) {
-          return GameState.makeMove(selectedPiece, [row, column], board[y][x]);
+          GameState.makeMove(selectedPiece, [row, column], board[y][x]);
+          GameState.resetValidMoves();
         }
       }
     }
