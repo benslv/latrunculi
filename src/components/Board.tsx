@@ -32,6 +32,8 @@ export const Board = () => {
         if (board[y][x] === currentTurn && GameState.isValidMove(row, column)) {
           GameState.makeMove(selectedPiece, [row, column], board[y][x]);
           GameState.resetValidMoves();
+
+          GameState.toggleTurn();
         }
       }
     }
