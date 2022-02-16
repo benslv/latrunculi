@@ -48,9 +48,7 @@ export const Board = () => {
     const before = values.slice(0, pos).lastIndexOf(blocker);
     const after = pos + 1 + values.slice(pos + 1).indexOf(blocker);
 
-    console.log(before, after);
-
-    return [before, after];
+    return [before, after === pos ? 8 : after];
   };
 
   const getValidMoves = (row: number, column: number): string[] => {
@@ -67,9 +65,6 @@ export const Board = () => {
     const [vertBefore, vertAfter] = getBlockers(vertical, row, opponentValue);
     const [horizBefore, horizAfter] = getBlockers(horizontal, column, opponentValue);
 
-    console.log("Vert:", vertBefore, vertAfter);
-    console.log("Horiz:", horizBefore, horizAfter);
-
     // Determine the valid vertical and horizontal squares remaining.
     vertical
       .map((_, i) => {
@@ -77,7 +72,7 @@ export const Board = () => {
           return i;
         }
       })
-      .filter((val) => val !== undefined)
+      .filter((i) => i !== undefined)
       .forEach((i) => GameState.addValidMove(i as number, column));
 
     horizontal
