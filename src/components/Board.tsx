@@ -8,6 +8,7 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   width: max-content;
+  gap: 5px;
 `;
 
 export const Board = () => {
