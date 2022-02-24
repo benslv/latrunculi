@@ -7,27 +7,26 @@ export const selectedPiece = entity([-1, -1]);
 export const setSelectedPiece = ([row, column]: [number, number]) =>
   selectedPiece.set([row, column]);
 
-// export const board = entity([
-//   [2, 0, 2, 0, 2, 0, 2, 0],
-//   [0, 2, 0, 2, 0, 2, 0, 2],
-//   [2, 0, 2, 0, 2, 0, 2, 0],
-//   [0, 0, 0, 0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 0, 0, 0],
-//   [0, 1, 0, 1, 0, 1, 0, 1],
-//   [1, 0, 1, 0, 1, 0, 1, 0],
-//   [0, 1, 0, 1, 0, 1, 0, 1],
-// ]);
-
 export const board = entity([
+  [2, 2, 2, 2, 2, 2, 2, 2],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 2, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 1, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 2, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1],
 ]);
+
+export const getBoardValue = (row: number, column: number) => {
+  const boardState = board.get();
+
+  if (row < 0 || row > boardState.length - 1 || column < 0 || column > boardState[0].length - 1) {
+    return 0;
+  }
+
+  return boardState[row][column];
+};
 
 export const makeMove = (start: number[], end: number[], val: number) => {
   const [y1, x1] = start;
@@ -37,6 +36,13 @@ export const makeMove = (start: number[], end: number[], val: number) => {
     prev[y2][x2] = val;
     prev[y1][x1] = 0;
 
+    return prev;
+  });
+};
+
+export const doCapture = (row: number, column: number) => {
+  board.set((prev) => {
+    prev[row][column] = 0;
     return prev;
   });
 };
@@ -51,3 +57,29 @@ export const resetValidMoves = () => validMoves.set([""]);
 
 export const isValidMove = (row: number, column: number) =>
   validMoves.get().includes([row, column].join("|"));
+
+export const processCaptures = (row: number, column: number) => {
+  const adjacentSquares = [
+    [row - 1, column],
+    [row + 1, column],
+    [row, column - 1],
+    [row, column + 1],
+  ];
+
+  for (const [x, y] of adjacentSquares) {
+    if (getBoardValue(x, y) !== currentTurn.get() && isSurrounded(x, y)) {
+      doCapture(x, y);
+    }
+  }
+};
+
+export const isSurrounded = (row: number, column: number) => {
+  const opponentVal = currentTurn.get();
+
+  return (
+    (getBoardValue(row - 1, column) === opponentVal &&
+      getBoardValue(row + 1, column) === opponentVal) ||
+    (getBoardValue(row, column - 1) === opponentVal &&
+      getBoardValue(row, column + 1) === opponentVal)
+  );
+};

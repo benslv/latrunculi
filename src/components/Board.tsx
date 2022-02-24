@@ -33,20 +33,24 @@ export const Board = () => {
           GameState.makeMove(selectedPiece, [row, column], board[y][x]);
           GameState.resetValidMoves();
 
+          GameState.processCaptures(row, column);
+
           GameState.toggleTurn();
         }
       }
     }
   };
 
-  const getBlockers = (values: number[], pos: number, blocker: 1 | 2): [number, number] => {
+  const getBlockers = (values: number[], pos: number): [number, number] => {
     // split into two lists either side of pos
     // find max index of bad value in first list
     // find min index of bad value in second list
     // indicates all pieces beyond (and including it) are unreachable
 
-    const before = values.slice(0, pos).lastIndexOf(blocker);
-    const after = pos + 1 + values.slice(pos + 1).indexOf(blocker);
+    values = values.map((val) => (val === 0 ? 0 : 1));
+
+    const before = values.slice(0, pos).lastIndexOf(1);
+    const after = pos + 1 + values.slice(pos + 1).indexOf(1);
 
     return [before, after === pos ? 8 : after];
   };
@@ -59,11 +63,11 @@ export const Board = () => {
     const vertical = board.map((row) => row[column]);
     const horizontal = board[row];
 
-    const opponentValue = currentTurn === 1 ? 2 : 1;
+    // const opponentValue = currentTurn === 1 ? 2 : 1;
 
     // Calculate the positions of the closest opponent pieces on both row and column.
-    const [vertBefore, vertAfter] = getBlockers(vertical, row, opponentValue);
-    const [horizBefore, horizAfter] = getBlockers(horizontal, column, opponentValue);
+    const [vertBefore, vertAfter] = getBlockers(vertical, row);
+    const [horizBefore, horizAfter] = getBlockers(horizontal, column);
 
     // Determine the valid vertical and horizontal squares remaining.
     vertical
