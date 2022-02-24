@@ -1,46 +1,16 @@
-# Getting Started with Create React App
+A React implement of the archaeological Roman game, Latrunculi.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Rules based on the interpretation at http://www.latrunculi.com/
 
-## Available Scripts
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- [ ] The board is oriented with 8 rows of ~~12~~ 8 columns, with the player's pawns on the back row and the king on the second row just to the right of the center.
+- [x] White moves first, similar to chess and checkers.
+- [ ] Pawns move like rooks in chess. Kings move similarly, but only 1 square at a time.
+    - [x] Pawn captures are made by surrounding an opposing piece on two opposing sides (i.e., in a line) with two of your own pieces; the edge of the board does not count as one of your pieces. The main exception is that captures of a pawn on a corner are made by surrounding the opposing piece on the two exposed sides.
+    - [ ] Kings cannot be captured, but they can participate in capturing opposing pawns as above.
+    - [x] You can move a pawn between two opposing pieces without it being captured.
+    - [ ] Repeating sequences of moves are not allowed. The same position with the same player to move cannot occur more than three times in the game; after the third occurrence, that position is illegal.
+    - [ ] A player wins by:
+        - [ ] Immobilizing the opponent's king, even if the opponent's own pieces are blocking it on some or all sides. This can happen even if the king is not surrounded on all sides if the open sides are illegal moves due to repetition.
+        - [ ] Capturing all of the opponent's pawns.
+        - [ ] Having more pieces on the board after 50 moves are made with no capture.
