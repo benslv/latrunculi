@@ -1,6 +1,8 @@
 import styled, { createGlobalStyle } from "styled-components";
 
 import { Board } from "./components/Board";
+import { H1 } from "./components/Heading";
+import { Text } from "./components/Text";
 
 const Container = styled.div`
   display: flex;
@@ -11,6 +13,15 @@ const Container = styled.div`
 `;
 
 const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;  
+    padding: 0;
+  }  
+  
+  html {
+    font-size: 18px;
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
                Roboto, Oxygen-Sans, Ubuntu, Cantarell,
@@ -22,9 +33,9 @@ function App() {
   return (
     <Container>
       <GlobalStyle />
-      <h1>Latrunculi</h1>
+      <H1>Latrunculi</H1>
       <Board />
-      <p>
+      <Text>
         Based on the rules at{" "}
         <a href="http://www.latrunculi.com" target="_blank" rel="noreferrer">
           http://www.latrunculi.com/
@@ -70,7 +81,7 @@ function App() {
             </li>
           </ul>
         </details>
-      </p>
+      </Text>
     </Container>
   );
 }
