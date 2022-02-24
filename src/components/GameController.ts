@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { entity } from "simpler-state";
 
 export const currentTurn = entity(1);
@@ -41,10 +42,18 @@ export const makeMove = (start: number[], end: number[], val: number) => {
 };
 
 export const doCapture = (row: number, column: number) => {
+  const capturedPiece = getBoardValue(row, column);
+
   board.set((prev) => {
     prev[row][column] = 0;
     return prev;
   });
+
+  if (capturedPiece === 1) {
+    toast("Your opponent captured your piece!", { icon: "💀" });
+  } else {
+    toast("You captured your opponent's piece!", { icon: "🔥" });
+  }
 };
 
 export const validMoves = entity([""]);
@@ -66,9 +75,11 @@ export const processCaptures = (row: number, column: number) => {
     [row, column + 1],
   ];
 
-  for (const [x, y] of adjacentSquares) {
-    if (getBoardValue(x, y) !== currentTurn.get() && isSurrounded(x, y)) {
-      doCapture(x, y);
+  const opponentVal = currentTurn.get() === 1 ? 2 : 1;
+
+  for (const [y, x] of adjacentSquares) {
+    if (getBoardValue(y, x) === opponentVal && isSurrounded(y, x)) {
+      doCapture(y, x);
     }
   }
 };
