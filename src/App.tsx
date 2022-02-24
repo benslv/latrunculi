@@ -11,6 +11,12 @@ function App() {
       <Board />
       <p>Selected piece: {selectedPiece}</p>
       <p>Current turn: {currentTurn}</p>
+      <p>
+        Based on the rules at{" "}
+        <a href="http://www.latrunculi.com" target="_blank" rel="noreferrer">
+          http://www.latrunculi.com/
+        </a>
+      </p>
     </div>
   );
 }
