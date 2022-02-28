@@ -5,7 +5,7 @@ type PieceProps = {
   currentTurn: number;
 };
 
-export const Piece = styled.div<PieceProps>`
+const Wrapper = styled.div<PieceProps>`
   background-color: ${({ val }) => (val === 1 ? "white" : "#1d1d1d")};
   border-radius: 50%;
 
@@ -16,3 +16,7 @@ export const Piece = styled.div<PieceProps>`
 
   cursor: ${({ currentTurn, val }) => (currentTurn === val ? "pointer" : "not-allowed")};
 `;
+
+export const Piece = ({ currentTurn, val }: PieceProps) => (
+  <Wrapper currentTurn={currentTurn} val={val} />
+);
