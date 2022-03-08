@@ -20,14 +20,16 @@ export const board = entity([
   [1, 1, 1, 1, 1, 1, 1, 1],
 ]);
 
-export const getBoardValue = (row: number, column: number) => {
+export const getBoardValue = (row: number, column: number): [number, boolean] => {
   const boardState = board.get();
 
   if (row < 0 || row > boardState.length - 1 || column < 0 || column > boardState[0].length - 1) {
-    return 0;
+    return [0, false];
   }
 
-  return boardState[row][column] > 2 ? boardState[row][column] - 2 : boardState[row][column];
+  const isKing = boardState[row][column] > 2;
+
+  return [isKing ? boardState[row][column] - 2 : boardState[row][column], isKing];
 };
 
 export const makeMove = (start: number[], end: number[], val: number) => {
@@ -43,7 +45,7 @@ export const makeMove = (start: number[], end: number[], val: number) => {
 };
 
 export const doCapture = (row: number, column: number) => {
-  const capturedPiece = getBoardValue(row, column);
+  const [capturedPiece] = getBoardValue(row, column);
 
   board.set((prev) => {
     prev[row][column] = 0;
@@ -130,7 +132,9 @@ export const processCaptures = (row: number, column: number) => {
   const opponentVal = currentTurn.get() === 1 ? 2 : 1;
 
   for (const [y, x] of adjacentSquares) {
-    if (getBoardValue(y, x) === opponentVal && isSurrounded(y, x)) {
+    const [val, isKing] = getBoardValue(y, x);
+
+    if (val === opponentVal && isSurrounded(y, x) && !isKing) {
       doCapture(y, x);
     }
   }
@@ -140,9 +144,9 @@ export const isSurrounded = (row: number, column: number) => {
   const opponentVal = currentTurn.get();
 
   return (
-    (getBoardValue(row - 1, column) === opponentVal &&
-      getBoardValue(row + 1, column) === opponentVal) ||
-    (getBoardValue(row, column - 1) === opponentVal &&
-      getBoardValue(row, column + 1) === opponentVal)
+    (getBoardValue(row - 1, column)[0] === opponentVal &&
+      getBoardValue(row + 1, column)[0] === opponentVal) ||
+    (getBoardValue(row, column - 1)[0] === opponentVal &&
+      getBoardValue(row, column + 1)[0] === opponentVal)
   );
 };
