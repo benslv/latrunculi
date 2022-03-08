@@ -25,7 +25,9 @@ export const Board = () => {
     // Check that selected piece equals current player...
     const [y, x] = selectedPiece;
 
-    if (board[y][x] === currentTurn && GameState.isValidMove(row, column)) {
+    const boardVal = board[y][x] > 2 ? board[y][x] - 2 : board[y][x];
+
+    if (boardVal === currentTurn && GameState.isValidMove(row, column)) {
       GameState.makeMove(selectedPiece, [row, column], board[y][x]);
       GameState.resetValidMoves();
 

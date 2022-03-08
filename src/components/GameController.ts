@@ -27,7 +27,7 @@ export const getBoardValue = (row: number, column: number) => {
     return 0;
   }
 
-  return boardState[row][column];
+  return boardState[row][column] > 2 ? boardState[row][column] - 2 : boardState[row][column];
 };
 
 export const makeMove = (start: number[], end: number[], val: number) => {
