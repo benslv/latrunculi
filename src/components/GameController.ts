@@ -93,11 +93,23 @@ export const generateValidMoves = (row: number, column: number, isKing = true): 
   // Determine the valid vertical and horizontal squares remaining.
   vertical
     .map((_, i) => i)
+    .filter((i) => {
+      if (isKing) {
+        return i >= row - 1 && i <= row + 1;
+      }
+      return true;
+    })
     .filter((i) => i > vertBefore && i < vertAfter && i !== row)
     .forEach((i) => addValidMove(i, column));
 
   horizontal
     .map((_, i) => i)
+    .filter((i) => {
+      if (isKing) {
+        return i >= column - 1 && i <= column + 1;
+      }
+      return true;
+    })
     .filter((i) => i > horizBefore && i < horizAfter && i !== column)
     .forEach((i) => addValidMove(row, i as number));
 };
