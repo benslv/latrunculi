@@ -24,7 +24,7 @@
   },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
-    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "indent": ["error", 2, { "SwitchCase": 1, "MemberExpression": 1 }],
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
     "react/display-name": 0,

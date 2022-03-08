@@ -46,7 +46,15 @@ export const Square = ({ val, row, column, handleSquareClick }: SquareProps) => 
       color={(row + column) % 2 == 0 ? "light" : "dark"}
       isMoveCandidate={isMoveCandidate}
       onClick={() => handleSquareClick(row, column)}>
-      {val ? <Piece val={val} currentTurn={currentTurn} /> : null}
+      {val ? (
+        <Piece
+          val={val > 2 ? val - 2 : val}
+          currentTurn={currentTurn}
+          row={row}
+          col={column}
+          isKing={val > 2 ? true : false}
+        />
+      ) : null}
     </Cell>
   );
 };

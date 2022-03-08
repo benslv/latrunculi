@@ -1,21 +1,22 @@
+/* eslint-disable indent */
 import toast from "react-hot-toast";
 import { entity } from "simpler-state";
 
 export const currentTurn = entity(1);
 export const toggleTurn = () => currentTurn.set((curr) => (curr === 1 ? 2 : 1));
 
-export const selectedPiece = entity([-1, -1]);
+export const selectedPiece = entity([0, 0]);
 export const setSelectedPiece = ([row, column]: [number, number]) =>
   selectedPiece.set([row, column]);
 
 export const board = entity([
   [2, 2, 2, 2, 2, 2, 2, 2],
+  [0, 0, 0, 0, 4, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 3, 0, 0, 0, 0],
   [1, 1, 1, 1, 1, 1, 1, 1],
 ]);
 
@@ -62,6 +63,45 @@ export const addValidMove = (row: number, column: number) => {
 
   validMoves.set((prev) => [...prev, move]);
 };
+
+const getBlockers = (values: number[], pos: number): [number, number] => {
+  // split into two lists either side of pos
+  // find max index of bad value in first list
+  // find min index of bad value in second list
+  // indicates all pieces beyond (and including it) are unreachable
+
+  values = values.map((val) => (val === 0 ? 0 : 1));
+
+  const before = values.slice(0, pos).lastIndexOf(1);
+  const after = pos + 1 + values.slice(pos + 1).indexOf(1);
+
+  return [before, after === pos ? 8 : after];
+};
+
+export const generateValidMoves = (row: number, column: number, isKing = true): void => {
+  // moves like a rook in chess
+  // any square on same row/column until blocked by opponent piece
+
+  // Get board values for row and column of selected piece.
+  const vertical = board.get().map((row) => row[column]);
+  const horizontal = board.get()[row];
+
+  // Calculate the positions of the closest opponent pieces on both row and column.
+  const [vertBefore, vertAfter] = getBlockers(vertical, row);
+  const [horizBefore, horizAfter] = getBlockers(horizontal, column);
+
+  // Determine the valid vertical and horizontal squares remaining.
+  vertical
+    .map((_, i) => i)
+    .filter((i) => i > vertBefore && i < vertAfter && i !== row)
+    .forEach((i) => addValidMove(i, column));
+
+  horizontal
+    .map((_, i) => i)
+    .filter((i) => i > horizBefore && i < horizAfter && i !== column)
+    .forEach((i) => addValidMove(row, i as number));
+};
+
 export const resetValidMoves = () => validMoves.set([""]);
 
 export const isValidMove = (row: number, column: number) =>
