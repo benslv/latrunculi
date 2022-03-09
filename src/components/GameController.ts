@@ -80,7 +80,11 @@ const getBlockers = (values: number[], pos: number): [number, number] => {
   return [before, after === pos ? 8 : after];
 };
 
-export const generateValidMoves = (row: number, column: number, isKing = true): void => {
+export const getValidMoves = (
+  row: number,
+  column: number,
+  isKing = false,
+): [number[], number[]] => {
   // moves like a rook in chess
   // any square on same row/column until blocked by opponent piece
 
@@ -93,7 +97,7 @@ export const generateValidMoves = (row: number, column: number, isKing = true): 
   const [horizBefore, horizAfter] = getBlockers(horizontal, column);
 
   // Determine the valid vertical and horizontal squares remaining.
-  vertical
+  const verticalMoves = vertical
     .map((_, i) => i)
     .filter((i) => {
       if (isKing) {
@@ -101,10 +105,9 @@ export const generateValidMoves = (row: number, column: number, isKing = true): 
       }
       return true;
     })
-    .filter((i) => i > vertBefore && i < vertAfter && i !== row)
-    .forEach((i) => addValidMove(i, column));
+    .filter((i) => i > vertBefore && i < vertAfter && i !== row);
 
-  horizontal
+  const horizontalMoves = horizontal
     .map((_, i) => i)
     .filter((i) => {
       if (isKing) {
@@ -112,8 +115,9 @@ export const generateValidMoves = (row: number, column: number, isKing = true): 
       }
       return true;
     })
-    .filter((i) => i > horizBefore && i < horizAfter && i !== column)
-    .forEach((i) => addValidMove(row, i as number));
+    .filter((i) => i > horizBefore && i < horizAfter && i !== column);
+
+  return [verticalMoves, horizontalMoves];
 };
 
 export const resetValidMoves = () => validMoves.set([""]);
@@ -143,10 +147,13 @@ export const processCaptures = (row: number, column: number) => {
 export const isSurrounded = (row: number, column: number) => {
   const opponentVal = currentTurn.get();
 
+  const [above] = getBoardValue(row - 1, column);
+  const [below] = getBoardValue(row + 1, column);
+  const [left] = getBoardValue(row, column - 1);
+  const [right] = getBoardValue(row, column + 1);
+
   return (
-    (getBoardValue(row - 1, column)[0] === opponentVal &&
-      getBoardValue(row + 1, column)[0] === opponentVal) ||
-    (getBoardValue(row, column - 1)[0] === opponentVal &&
-      getBoardValue(row, column + 1)[0] === opponentVal)
+    [above, below].every((val) => val === opponentVal) ||
+    [left, right].every((val) => val === opponentVal)
   );
 };

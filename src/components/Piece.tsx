@@ -3,7 +3,8 @@ import {
   currentTurn,
   setSelectedPiece,
   resetValidMoves,
-  generateValidMoves,
+  getValidMoves,
+  addValidMove,
 } from "./GameController";
 
 type PieceProps = {
@@ -35,7 +36,15 @@ export const Piece = (props: PieceProps) => {
     setSelectedPiece([props.row, props.col]);
     resetValidMoves();
 
-    return generateValidMoves(props.row, props.col, props.isKing);
+    const [validVertical, validHorizontal] = getValidMoves(props.row, props.col, props.isKing);
+
+    for (const row of validVertical) {
+      addValidMove(row, props.col);
+    }
+
+    for (const col of validHorizontal) {
+      addValidMove(props.row, col);
+    }
   };
 
   return (
