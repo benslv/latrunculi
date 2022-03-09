@@ -11,6 +11,6 @@ Rules based on the interpretation at http://www.latrunculi.com/
     - [x] You can move a pawn between two opposing pieces without it being captured.
     - [ ] Repeating sequences of moves are not allowed. The same position with the same player to move cannot occur more than three times in the game; after the third occurrence, that position is illegal.
     - [ ] A player wins by:
-        - [ ] Immobilizing the opponent's king, even if the opponent's own pieces are blocking it on some or all sides. This can happen even if the king is not surrounded on all sides if the open sides are illegal moves due to repetition.
+        - [x] Immobilizing the opponent's king, even if the opponent's own pieces are blocking it on some or all sides. This can happen even if the king is not surrounded on all sides if the open sides are illegal moves due to repetition.
         - [ ] Capturing all of the opponent's pawns.
         - [ ] Having more pieces on the board after 50 moves are made with no capture.

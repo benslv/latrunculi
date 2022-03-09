@@ -5,6 +5,14 @@ import { entity } from "simpler-state";
 export const currentTurn = entity(1);
 export const toggleTurn = () => currentTurn.set((curr) => (curr === 1 ? 2 : 1));
 
+export const numWhiteLeft = entity(8);
+export const whiteKingAlive = entity(true);
+
+export const numBlackLeft = entity(8);
+export const blackKingAlive = entity(true);
+
+export const winner = entity(0);
+
 export const selectedPiece = entity([0, 0]);
 export const setSelectedPiece = ([row, column]: [number, number]) =>
   selectedPiece.set([row, column]);
@@ -44,7 +52,7 @@ export const makeMove = (start: number[], end: number[], val: number) => {
   });
 };
 
-export const doCapture = (row: number, column: number) => {
+export const doCapture = (row: number, column: number, isKing = false) => {
   const [capturedPiece] = getBoardValue(row, column);
 
   board.set((prev) => {
@@ -52,10 +60,33 @@ export const doCapture = (row: number, column: number) => {
     return prev;
   });
 
+  if (isKing) {
+    switch (capturedPiece) {
+      case 1: {
+        winner.set(2);
+        toast("Oh no, your king was captured!", { icon: "😭" });
+        return;
+      }
+      case 2: {
+        winner.set(1);
+        toast("Congratulations, you captured their king!", { icon: "⚔" });
+        return;
+      }
+    }
+  }
+
   if (capturedPiece === 1) {
-    toast("Your opponent captured your piece!", { icon: "💀" });
+    numWhiteLeft.set((prev) => prev - 1);
+    toast("Your opponent captured one of your pawns!", { icon: "💀" });
   } else {
-    toast("You captured your opponent's piece!", { icon: "🔥" });
+    numBlackLeft.set((prev) => prev - 1);
+    toast("You captured one of your opponent's pawns!", { icon: "🔥" });
+  }
+
+  if (numBlackLeft.get() === 0) {
+    winner.set(1);
+  } else if (numWhiteLeft.get() === 0) {
+    winner.set(2);
   }
 };
 
@@ -138,22 +169,38 @@ export const processCaptures = (row: number, column: number) => {
   for (const [y, x] of adjacentSquares) {
     const [val, isKing] = getBoardValue(y, x);
 
-    if (val === opponentVal && isSurrounded(y, x) && !isKing) {
+    if (val !== opponentVal) continue;
+
+    if (isKing && isSurroundedOnAllSides(y, x)) {
+      doCapture(y, x, true);
+    } else if (isSurroundedOnOppositeSides(y, x)) {
       doCapture(y, x);
     }
   }
 };
 
-export const isSurrounded = (row: number, column: number) => {
+const isSurroundedOnOppositeSides = (row: number, column: number) => {
   const opponentVal = currentTurn.get();
 
-  const [above] = getBoardValue(row - 1, column);
-  const [below] = getBoardValue(row + 1, column);
-  const [left] = getBoardValue(row, column - 1);
-  const [right] = getBoardValue(row, column + 1);
+  const [above, below, left, right] = getAdjacentSquares(row, column);
 
   return (
     [above, below].every((val) => val === opponentVal) ||
     [left, right].every((val) => val === opponentVal)
   );
+};
+
+const isSurroundedOnAllSides = (row: number, column: number) => {
+  const opponentVal = currentTurn.get();
+
+  return getAdjacentSquares(row, column).every((val) => val === opponentVal);
+};
+
+const getAdjacentSquares = (row: number, column: number) => {
+  const [above] = getBoardValue(row - 1, column);
+  const [below] = getBoardValue(row + 1, column);
+  const [left] = getBoardValue(row, column - 1);
+  const [right] = getBoardValue(row, column + 1);
+
+  return [above, below, left, right];
 };

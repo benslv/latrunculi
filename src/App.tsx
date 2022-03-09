@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import { Board } from "./components/Board";
 import { H1 } from "./components/Heading";
 import { Text } from "./components/Text";
+import * as GameState from "./components/GameController";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -35,12 +36,18 @@ const Rules = styled.div`
 `;
 
 function App() {
+  const winner = GameState.winner.use();
+  const numBlackLeft = GameState.numBlackLeft.use();
+  const numWhiteLeft = GameState.numWhiteLeft.use();
+
   return (
     <Container>
       <GlobalStyle />
       <Toaster position="bottom-left" />
       <H1>Latrunculi</H1>
-      <Board />
+      {winner === 0 ? <Board /> : <H1>We have a winner! Player {winner} wins!</H1>}
+      <Text># white left: {numWhiteLeft}</Text>
+      <Text># black left: {numBlackLeft}</Text>
       <Rules>
         <Text>
           Based on the rules at{" "}
