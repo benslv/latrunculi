@@ -173,7 +173,7 @@ export const processCaptures = (row: number, column: number) => {
 
     if (isKing && isSurroundedOnAllSides(y, x)) {
       doCapture(y, x, true);
-    } else if (isSurroundedOnOppositeSides(y, x)) {
+    } else if (isSurroundedOnOppositeSides(y, x) || isCornered(y, x)) {
       doCapture(y, x);
     }
   }
@@ -203,4 +203,10 @@ const getAdjacentSquares = (row: number, column: number) => {
   const [right] = getBoardValue(row, column + 1);
 
   return [above, below, left, right];
+};
+
+const isCornered = (row: number, column: number) => {
+  const [vertical, horizontal] = getValidMoves(row, column);
+
+  return vertical.length === 0 && horizontal.length === 0;
 };
