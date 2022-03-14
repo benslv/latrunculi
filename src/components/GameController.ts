@@ -206,7 +206,22 @@ const getAdjacentSquares = (row: number, column: number) => {
 };
 
 const isCornered = (row: number, column: number) => {
-  const [vertical, horizontal] = getValidMoves(row, column);
+  const [above, below, left, right] = getAdjacentSquares(row, column);
 
-  return vertical.length === 0 && horizontal.length === 0;
+  const opponentVal = currentTurn.get();
+
+  switch (true) {
+    case row === 0 && column === 0: {
+      return below === opponentVal && right === opponentVal;
+    }
+    case row === 0 && column === 7: {
+      return below === opponentVal && left === opponentVal;
+    }
+    case row === 7 && column === 0: {
+      return above === opponentVal && right === opponentVal;
+    }
+    case row === 7 && column === 7: {
+      return above === opponentVal && left === opponentVal;
+    }
+  }
 };
