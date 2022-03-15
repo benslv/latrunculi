@@ -40,9 +40,9 @@ const Rules = styled.div`
 const board = new Board();
 
 function App() {
-  const winner = board.winner;
-  const numBlackLeft = board.numBlackLeft;
-  const numWhiteLeft = board.numWhiteLeft;
+  const winner = board.winner.use();
+  const numBlackLeft = board.numBlackLeft.use();
+  const numWhiteLeft = board.numWhiteLeft.use();
 
   return (
     <Container>

@@ -1,30 +1,31 @@
 import toast from "react-hot-toast";
+import { entity, Entity } from "simpler-state";
 
 export class Board {
-  currentTurn: 1 | 2;
-  numWhiteLeft: number;
-  numBlackLeft: number;
-  whiteKingAlive: boolean;
-  blackKingAlive: boolean;
-  winner: 0 | 1 | 2;
-  selectedPiece: [number, number];
-  layout: number[][];
-  validMoves: string[];
+  currentTurn: Entity<number>;
+  numWhiteLeft: Entity<number>;
+  numBlackLeft: Entity<number>;
+  whiteKingAlive: Entity<boolean>;
+  blackKingAlive: Entity<boolean>;
+  winner: Entity<number>;
+  selectedPiece: Entity<number[]>;
+  layout: Entity<number[][]>;
+  validMoves: Entity<string[]>;
 
   constructor() {
-    this.currentTurn = 1;
+    this.currentTurn = entity(1);
 
-    this.numWhiteLeft = 8;
-    this.numBlackLeft = 8;
+    this.numWhiteLeft = entity(8);
+    this.numBlackLeft = entity(8);
 
-    this.whiteKingAlive = true;
-    this.blackKingAlive = true;
+    this.whiteKingAlive = entity(true) as Entity<boolean>;
+    this.blackKingAlive = entity(true) as Entity<boolean>;
 
-    this.winner = 0;
+    this.winner = entity(0);
 
-    this.selectedPiece = [0, 0];
+    this.selectedPiece = entity([0, 0]);
 
-    this.layout = [
+    this.layout = entity([
       [2, 2, 2, 2, 2, 2, 2, 2],
       [0, 0, 0, 0, 4, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0],
@@ -33,53 +34,53 @@ export class Board {
       [0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 3, 0, 0, 0, 0],
       [1, 1, 1, 1, 1, 1, 1, 1],
-    ];
+    ]);
 
-    this.validMoves = [];
+    this.validMoves = entity([""]);
   }
 
   setSelectedPiece([row, column]: [number, number]) {
-    this.selectedPiece = [row, column];
+    this.selectedPiece.set([row, column]);
   }
 
   toggleTurn() {
-    this.currentTurn = this.currentTurn === 1 ? 2 : 1;
+    this.currentTurn.set((prev) => (prev === 1 ? 2 : 1));
   }
 
   getBoardValue(row: number, column: number): [number, boolean] {
     if (
       row < 0 ||
-      row > this.layout.length - 1 ||
+      row > this.layout.get().length - 1 ||
       column < 0 ||
-      column > this.layout[0].length - 1
+      column > this.layout.get()[0].length - 1
     ) {
       return [0, false];
     }
 
-    const isKing = this.layout[row][column] > 2;
+    const isKing = this.layout.get()[row][column] > 2;
 
-    return [isKing ? this.layout[row][column] - 2 : this.layout[row][column], isKing];
+    return [isKing ? this.layout.get()[row][column] - 2 : this.layout.get()[row][column], isKing];
   }
 
-  makeMove([y1, x1]: [number, number], [y2, x2]: [number, number], val: number) {
-    this.layout[y2][x2] = val;
-    this.layout[y1][x1] = 0;
+  makeMove([y1, x1]: number[], [y2, x2]: number[], val: number) {
+    this.layout.get()[y2][x2] = val;
+    this.layout.get()[y1][x1] = 0;
   }
 
   doCapture(row: number, column: number, isKing = false) {
     const [capturedPiece] = this.getBoardValue(row, column);
 
-    this.layout[row][column] = 0;
+    this.layout.get()[row][column] = 0;
 
     if (isKing) {
       switch (capturedPiece) {
         case 1: {
-          this.winner = 2;
+          this.winner.set(2);
 
           return toast("Oh no, your king was captured!", { icon: "😭" });
         }
         case 2: {
-          this.winner = 1;
+          this.winner.set(1);
 
           return toast("Congratulations, you captured their king!", { icon: "⚔" });
         }
@@ -87,26 +88,26 @@ export class Board {
     }
 
     if (capturedPiece === 1) {
-      this.numWhiteLeft -= 1;
+      this.numWhiteLeft.set((prev) => prev - 1);
 
       toast("Your opponent captured one of your pawns!", { icon: "💀" });
     } else {
-      this.numBlackLeft -= 1;
+      this.numBlackLeft.set((prev) => prev - 1);
 
       toast("You captured one of your opponent's pawns!", { icon: "🔥" });
     }
 
-    if (this.numBlackLeft === 0) {
-      this.winner = 1;
-    } else if (this.numWhiteLeft === 0) {
-      this.winner = 2;
+    if (this.numBlackLeft.get() === 0) {
+      this.winner.set(1);
+    } else if (this.numWhiteLeft.get() === 0) {
+      this.winner.set(2);
     }
   }
 
   addValidMove(row: number, column: number) {
     const move = [row, column].join("|");
 
-    this.validMoves.push(move);
+    this.validMoves.set((prev) => [...prev, move]);
   }
 
   getBlockers(values: number[], pos: number) {
@@ -124,8 +125,8 @@ export class Board {
   }
 
   getValidMoves(row: number, column: number, isKing = false) {
-    const vertical = this.layout.map((row) => row[column]);
-    const horizontal = this.layout[row];
+    const vertical = this.layout.get().map((row) => row[column]);
+    const horizontal = this.layout.get()[row];
 
     // Calculate the positions of the closest opponent pieces on both row and column.
     const [vertBefore, vertAfter] = this.getBlockers(vertical, row);
@@ -156,11 +157,11 @@ export class Board {
   }
 
   resetValidMoves() {
-    this.validMoves = [];
+    this.validMoves.set([""]);
   }
 
   isValidMove(row: number, column: number) {
-    return this.validMoves.includes([row, column].join("|"));
+    return this.validMoves.get().includes([row, column].join("|"));
   }
 
   processCaptures(row: number, column: number) {
@@ -171,7 +172,7 @@ export class Board {
       [row, column + 1],
     ];
 
-    const opponentVal = this.currentTurn === 1 ? 2 : 1;
+    const opponentVal = this.currentTurn.get() === 1 ? 2 : 1;
 
     for (const [y, x] of adjacentSquares) {
       const [val, isKing] = this.getBoardValue(y, x);
@@ -187,7 +188,7 @@ export class Board {
   }
 
   isSurroundedOnOppositeSides(row: number, column: number) {
-    const opponentVal = this.currentTurn;
+    const opponentVal = this.currentTurn.get();
 
     const [above, below, left, right] = this.getAdjacentSquares(row, column);
 
@@ -198,7 +199,7 @@ export class Board {
   }
 
   isSurroundedOnAllSides(row: number, column: number) {
-    const opponentVal = this.currentTurn;
+    const opponentVal = this.currentTurn.get();
 
     return this.getAdjacentSquares(row, column).every((val) => val === opponentVal);
   }
@@ -215,7 +216,7 @@ export class Board {
   isCornered(row: number, column: number) {
     const [above, below, left, right] = this.getAdjacentSquares(row, column);
 
-    const opponentVal = this.currentTurn;
+    const opponentVal = this.currentTurn.get();
 
     switch (true) {
       case row === 0 && column === 0: {

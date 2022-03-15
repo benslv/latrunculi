@@ -1,11 +1,4 @@
 import styled from "styled-components";
-// import {
-//   currentTurn,
-//   setSelectedPiece,
-//   resetValidMoves,
-//   getValidMoves,
-//   addValidMove,
-// } from "./GameController";
 import type { Board } from "../utils/board";
 
 type PieceProps = {
@@ -34,8 +27,10 @@ const Wrapper = styled.div<PieceProps>`
 export const Piece = (props: PieceProps) => {
   const { val, row, col, isKing, board } = props;
 
+  const currentTurn = board.currentTurn.use();
+
   const handlePieceClick = () => {
-    if (val !== board.currentTurn) return;
+    if (val !== currentTurn) return;
 
     board.setSelectedPiece([row, col]);
     board.resetValidMoves();
