@@ -11,6 +11,7 @@ export class Board {
   selectedPiece: Entity<number[]>;
   layout: Entity<number[][]>;
   validMoves: Entity<string[]>;
+  boardStateTracker: Entity<Map<string, number>>;
 
   constructor() {
     this.currentTurn = entity(1);
@@ -37,6 +38,8 @@ export class Board {
     ]);
 
     this.validMoves = entity([""]);
+
+    this.boardStateTracker = entity(new Map());
   }
 
   setSelectedPiece([row, column]: [number, number]) {
@@ -63,14 +66,21 @@ export class Board {
   }
 
   makeMove([y1, x1]: number[], [y2, x2]: number[], val: number) {
-    this.layout.get()[y2][x2] = val;
-    this.layout.get()[y1][x1] = 0;
+    this.layout.set((prev) => {
+      prev[y2][x2] = val;
+      prev[y1][x1] = 0;
+
+      return prev;
+    });
   }
 
   doCapture(row: number, column: number, isKing = false) {
     const [capturedPiece] = this.getBoardValue(row, column);
 
-    this.layout.get()[row][column] = 0;
+    this.layout.set((prev) => {
+      prev[row][column] = 0;
+      return prev;
+    });
 
     if (isKing) {
       switch (capturedPiece) {

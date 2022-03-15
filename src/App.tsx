@@ -1,11 +1,9 @@
-import { createContext } from "react";
 import { Toaster } from "react-hot-toast";
 import styled, { createGlobalStyle } from "styled-components";
 
 import { GameBoard } from "./components/Board";
 import { H1 } from "./components/Heading";
 import { Text } from "./components/Text";
-import * as GameState from "./components/GameController";
 import { Board } from "./utils/board";
 
 const GlobalStyle = createGlobalStyle`
