@@ -35,7 +35,7 @@ export const Piece = (props: PieceProps) => {
     board.setSelectedPiece([row, col]);
     board.resetValidMoves();
 
-    const [validVertical, validHorizontal] = board.getValidMoves(row, col, isKing);
+    const [validVertical, validHorizontal] = board.getValidMoves(row, col, isKing, val);
 
     for (const row of validVertical) {
       board.addValidMove(row, col);

@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import { entity, Entity } from "simpler-state";
+import rfdc from "rfdc";
 
 export class Board {
   currentTurn: Entity<number>;
@@ -66,12 +67,29 @@ export class Board {
   }
 
   makeMove([y1, x1]: number[], [y2, x2]: number[], val: number) {
-    this.layout.set((prev) => {
-      prev[y2][x2] = val;
-      prev[y1][x1] = 0;
+    const newBoard = this.layout.get();
+
+    newBoard[y2][x2] = val;
+    newBoard[y1][x1] = 0;
+
+    this.layout.set(newBoard);
+
+    this.boardStateTracker.set((prev) => {
+      const boardState = newBoard.flat().join("");
+
+      prev.set(boardState, (prev.get(boardState) ?? 0) + 1);
 
       return prev;
     });
+  }
+
+  simulateMove([y1, x1]: number[], [y2, x2]: number[], val: number) {
+    const board = rfdc()(this.layout.get());
+
+    board[y2][x2] = val;
+    board[y1][x1] = 0;
+
+    return board;
   }
 
   doCapture(row: number, column: number, isKing = false) {
@@ -134,7 +152,7 @@ export class Board {
     return [before, after === pos ? 8 : after];
   }
 
-  getValidMoves(row: number, column: number, isKing = false) {
+  getValidMoves(row: number, column: number, isKing = false, val: number) {
     const vertical = this.layout.get().map((row) => row[column]);
     const horizontal = this.layout.get()[row];
 
@@ -151,7 +169,12 @@ export class Board {
         }
         return true;
       })
-      .filter((i) => i > vertBefore && i < vertAfter && i !== row);
+      .filter((i) => i > vertBefore && i < vertAfter && i !== row)
+      .filter((i) => {
+        const simulatedState = this.simulateMove([row, column], [i, column], val).flat().join("");
+
+        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 1;
+      });
 
     const horizontalMoves = horizontal
       .map((_, i) => i)
@@ -161,7 +184,12 @@ export class Board {
         }
         return true;
       })
-      .filter((i) => i > horizBefore && i < horizAfter && i !== column);
+      .filter((i) => i > horizBefore && i < horizAfter && i !== column)
+      .filter((i) => {
+        const simulatedState = this.simulateMove([row, column], [row, i], val).flat().join("");
+
+        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 1;
+      });
 
     return [verticalMoves, horizontalMoves];
   }
