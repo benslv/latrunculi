@@ -3,6 +3,8 @@ import styled from "styled-components";
 import * as GameState from "./GameController";
 import { Square } from "./Square";
 
+import type { Board as BoardT } from "../utils/board";
+
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -12,10 +14,9 @@ const Wrapper = styled.div`
   padding: 1em 0;
 `;
 
-export const Board = () => {
-  const board = GameState.board.use();
-  const currentTurn = GameState.currentTurn.use();
-  const selectedPiece = GameState.selectedPiece.use();
+export const GameBoard = ({ board }: { board: BoardT }) => {
+  const currentTurn = board.currentTurn;
+  const selectedPiece = board.selectedPiece;
 
   const handleSquareClick = (row: number, column: number) => {
     if (!selectedPiece) return;
@@ -24,28 +25,29 @@ export const Board = () => {
     // Check that selected piece equals current player...
     const [y, x] = selectedPiece;
 
-    const boardVal = board[y][x] > 2 ? board[y][x] - 2 : board[y][x];
+    const boardVal = board.layout[y][x] > 2 ? board.layout[y][x] - 2 : board.layout[y][x];
 
     if (boardVal === currentTurn && GameState.isValidMove(row, column)) {
-      GameState.makeMove(selectedPiece, [row, column], board[y][x]);
-      GameState.resetValidMoves();
+      board.makeMove(selectedPiece, [row, column], board.layout[y][x]);
+      board.resetValidMoves();
 
-      GameState.processCaptures(row, column);
+      board.processCaptures(row, column);
 
-      GameState.toggleTurn();
+      board.toggleTurn();
     }
   };
 
   return (
     <Wrapper>
-      {board.map((row, j) =>
+      {board.layout.map((row, j) =>
         row.map((_, i) => (
           <Square
             key={`${j}|${i}`}
-            val={board[j][i]}
+            val={board.layout[j][i]}
             row={j}
             column={i}
             handleSquareClick={handleSquareClick}
+            board={board}
           />
         )),
       )}

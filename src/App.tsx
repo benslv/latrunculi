@@ -1,10 +1,12 @@
+import { createContext } from "react";
 import { Toaster } from "react-hot-toast";
 import styled, { createGlobalStyle } from "styled-components";
 
-import { Board } from "./components/Board";
+import { GameBoard } from "./components/Board";
 import { H1 } from "./components/Heading";
 import { Text } from "./components/Text";
 import * as GameState from "./components/GameController";
+import { Board } from "./utils/board";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -35,17 +37,23 @@ const Rules = styled.div`
   width: 100%;
 `;
 
+const board = new Board();
+
 function App() {
-  const winner = GameState.winner.use();
-  const numBlackLeft = GameState.numBlackLeft.use();
-  const numWhiteLeft = GameState.numWhiteLeft.use();
+  const winner = board.winner;
+  const numBlackLeft = board.numBlackLeft;
+  const numWhiteLeft = board.numWhiteLeft;
 
   return (
     <Container>
       <GlobalStyle />
       <Toaster position="bottom-left" />
       <H1>Latrunculi</H1>
-      {winner === 0 ? <Board /> : <H1>We have a winner! Player {winner} wins!</H1>}
+      {winner === 0 ? (
+        <GameBoard board={board} />
+      ) : (
+        <H1>We have a winner! Player {winner} wins!</H1>
+      )}
       <Text># white left: {numWhiteLeft}</Text>
       <Text># black left: {numBlackLeft}</Text>
       <Rules>

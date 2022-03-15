@@ -42,6 +42,10 @@ export class Board {
     this.selectedPiece = [row, column];
   }
 
+  toggleTurn() {
+    this.currentTurn = this.currentTurn === 1 ? 2 : 1;
+  }
+
   getBoardValue(row: number, column: number): [number, boolean] {
     if (
       row < 0 ||

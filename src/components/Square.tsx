@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Piece } from "./Piece";
 
-import * as GameState from "./GameController";
+import type { Board as Board } from "../utils/board";
 
 type CellProps = {
   color: "light" | "dark";
@@ -13,6 +13,7 @@ type SquareProps = {
   row: number;
   column: number;
   handleSquareClick: (row: number, column: number) => void;
+  board: Board;
 };
 
 const colours = {
@@ -36,10 +37,10 @@ const Cell = styled.div<CellProps>`
     isMoveCandidate ? "#e0a802" : colours[color]};
 `;
 
-export const Square = ({ val, row, column, handleSquareClick }: SquareProps) => {
-  const currentTurn = GameState.currentTurn.use();
+export const Square = ({ val, row, column, handleSquareClick, board }: SquareProps) => {
+  const currentTurn = board.currentTurn;
 
-  const isMoveCandidate = GameState.isValidMove(row, column);
+  const isMoveCandidate = board.isValidMove(row, column);
 
   return (
     <Cell
@@ -53,6 +54,7 @@ export const Square = ({ val, row, column, handleSquareClick }: SquareProps) => 
           row={row}
           col={column}
           isKing={val > 2 ? true : false}
+          board={board}
         />
       ) : null}
     </Cell>
