@@ -173,7 +173,7 @@ export class Board {
       .filter((i) => {
         const simulatedState = this.simulateMove([row, column], [i, column], val).flat().join("");
 
-        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 1;
+        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 3;
       });
 
     const horizontalMoves = horizontal
@@ -188,7 +188,7 @@ export class Board {
       .filter((i) => {
         const simulatedState = this.simulateMove([row, column], [row, i], val).flat().join("");
 
-        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 1;
+        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 3;
       });
 
     return [verticalMoves, horizontalMoves];
