@@ -41,6 +41,7 @@ function App() {
   const winner = board.winner.use();
   const numBlackLeft = board.numBlackLeft.use();
   const numWhiteLeft = board.numWhiteLeft.use();
+  const numMoves = board.numMoves.use();
 
   return (
     <Container>
@@ -50,10 +51,14 @@ function App() {
       {winner === 0 ? (
         <GameBoard board={board} />
       ) : (
-        <H1>We have a winner! Player {winner} wins!</H1>
+        <>
+          <H1>We have a winner! Player {winner} wins!</H1>
+          <Text>The game was completed in {numMoves} moves.</Text>
+        </>
       )}
       <Text># white left: {numWhiteLeft}</Text>
       <Text># black left: {numBlackLeft}</Text>
+      <Text># moves made: {numMoves}</Text>
       <Rules>
         <Text>
           Based on the rules at{" "}

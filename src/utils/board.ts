@@ -3,6 +3,7 @@ import { entity, Entity } from "simpler-state";
 import rfdc from "rfdc";
 
 export class Board {
+  numMoves: Entity<number>;
   currentTurn: Entity<number>;
   numWhiteLeft: Entity<number>;
   numBlackLeft: Entity<number>;
@@ -15,6 +16,8 @@ export class Board {
   boardStateTracker: Entity<Map<string, number>>;
 
   constructor() {
+    this.numMoves = entity(0);
+
     this.currentTurn = entity(1);
 
     this.numWhiteLeft = entity(8);
@@ -81,6 +84,8 @@ export class Board {
 
       return prev;
     });
+
+    this.numMoves.set((prev) => prev + 1);
   }
 
   simulateMove([y1, x1]: number[], [y2, x2]: number[], val: number) {
