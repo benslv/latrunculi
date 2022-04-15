@@ -35,7 +35,7 @@ export const Piece = (props: PieceProps) => {
     if (val !== currentTurn || winner !== 0) return;
 
     if (selectedPiece[0] === row && selectedPiece[1] === col) {
-      board.setSelectedPiece([0, 0]);
+      board.setSelectedPiece([-1, -1]);
       board.resetValidMoves();
 
       return;

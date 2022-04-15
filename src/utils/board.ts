@@ -35,7 +35,7 @@ export class Board {
 
     this.winner = entity(0);
 
-    this.selectedPiece = entity([0, 0]);
+    this.selectedPiece = entity([-1, -1]);
 
     // this.layout = entity([
     //   [2, 2, 2, 2, 2, 2, 2, 2],
