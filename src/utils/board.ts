@@ -27,8 +27,8 @@ export class Board {
 
     this.currentTurn = entity(1);
 
-    this.numWhiteLeft = entity(4);
-    this.numBlackLeft = entity(4);
+    this.numWhiteLeft = entity(8);
+    this.numBlackLeft = entity(8);
 
     this.whiteKingAlive = entity(true) as Entity<boolean>;
     this.blackKingAlive = entity(true) as Entity<boolean>;
@@ -37,22 +37,15 @@ export class Board {
 
     this.selectedPiece = entity([-1, -1]);
 
-    // this.layout = entity([
-    //   [2, 2, 2, 2, 2, 2, 2, 2],
-    //   [0, 0, 0, 0, 4, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 3, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 1, 1, 1],
-    // ]);
-
     this.layout = entity([
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [2, 2, 2, 2],
+      [2, 2, 2, 2, 2, 2, 2, 2],
+      [0, 0, 0, 0, 4, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 3, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 1, 1, 1],
     ]);
 
     this.boardWidth = this.layout.get()[0].length;

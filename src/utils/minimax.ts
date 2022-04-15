@@ -13,10 +13,16 @@ export class Minimax {
   run(state: string) {
     this.board.loadState(state);
 
-    return this.getMove([], 1, state);
+    return this.getMove([], 4, state, -Infinity, Infinity);
   }
 
-  getMove(path: Move[], depth: number, state: string): { score: number; bestMove: Move } {
+  getMove(
+    path: Move[],
+    depth: number,
+    state: string,
+    alpha: number,
+    beta: number,
+  ): { score: number; bestMove: Move } {
     this.board.loadState(state);
 
     for (const move of path) {
@@ -44,7 +50,7 @@ export class Minimax {
 
         child.push(move);
 
-        const childValue = this.getMove(child, depth - 1, state);
+        const childValue = this.getMove(child, depth - 1, state, alpha, beta);
 
         if (value.bestMove == { start: [0, 0], end: [0, 0] }) {
           value.score = childValue.score;
@@ -55,6 +61,19 @@ export class Minimax {
         if (childValue.score < value.score) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
+        }
+
+        if (childValue.score === value.score && Math.random() < 0.1) {
+          value.score = childValue.score;
+          value.bestMove = childValue.bestMove;
+        }
+
+        if (value.score >= beta) {
+          break;
+        }
+
+        if (value.score >= alpha) {
+          alpha = value.score;
         }
       }
     } else {
@@ -69,7 +88,7 @@ export class Minimax {
 
         child.push(move);
 
-        const childValue = this.getMove(child, depth - 1, state);
+        const childValue = this.getMove(child, depth - 1, state, alpha, beta);
 
         if (value.bestMove == { start: [0, 0], end: [0, 0] }) {
           value.score = childValue.score;
@@ -80,6 +99,19 @@ export class Minimax {
         if (childValue.score > value.score) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
+        }
+
+        if (childValue.score === value.score && Math.random() < 0.1) {
+          value.score = childValue.score;
+          value.bestMove = childValue.bestMove;
+        }
+
+        if (value.score <= alpha) {
+          break;
+        }
+
+        if (value.score <= beta) {
+          beta = value.score;
         }
       }
     }
