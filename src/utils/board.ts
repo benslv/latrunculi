@@ -2,6 +2,11 @@ import toast from "react-hot-toast";
 import { entity, Entity } from "simpler-state";
 import rfdc from "rfdc";
 
+export type Move = {
+  start: number[];
+  end: number[];
+};
+
 export class Board {
   numMoves: Entity<number>;
   currentTurn: Entity<number>;
@@ -14,14 +19,16 @@ export class Board {
   layout: Entity<number[][]>;
   validMoves: Entity<string[]>;
   boardStateTracker: Entity<Map<string, number>>;
+  boardWidth: number;
+  boardHeight: number;
 
   constructor() {
     this.numMoves = entity(0);
 
     this.currentTurn = entity(1);
 
-    this.numWhiteLeft = entity(8);
-    this.numBlackLeft = entity(8);
+    this.numWhiteLeft = entity(4);
+    this.numBlackLeft = entity(4);
 
     this.whiteKingAlive = entity(true) as Entity<boolean>;
     this.blackKingAlive = entity(true) as Entity<boolean>;
@@ -30,23 +37,71 @@ export class Board {
 
     this.selectedPiece = entity([0, 0]);
 
+    // this.layout = entity([
+    //   [2, 2, 2, 2, 2, 2, 2, 2],
+    //   [0, 0, 0, 0, 4, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 3, 0, 0, 0, 0],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    // ]);
+
     this.layout = entity([
-      [2, 2, 2, 2, 2, 2, 2, 2],
-      [0, 0, 0, 0, 4, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 3, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [2, 2, 2, 2],
     ]);
+
+    this.boardWidth = this.layout.get()[0].length;
+    this.boardHeight = this.layout.get().length;
 
     this.validMoves = entity([""]);
 
     this.boardStateTracker = entity(new Map());
   }
 
-  setSelectedPiece([row, column]: [number, number]) {
+  copyState(): string {
+    return JSON.stringify({
+      currentTurn: this.currentTurn.get(),
+      numWhiteLeft: this.numWhiteLeft.get(),
+      numBlackLeft: this.numBlackLeft.get(),
+      whiteKingAlive: this.whiteKingAlive.get(),
+      blackKingAlive: this.blackKingAlive.get(),
+      winner: this.winner.get(),
+      selectedPiece: this.selectedPiece.get(),
+      layout: this.layout.get(),
+      boardStateTracker: JSON.stringify(Array.from(this.boardStateTracker.get().entries())),
+    });
+  }
+
+  loadState(state: string) {
+    const {
+      currentTurn,
+      numWhiteLeft,
+      numBlackLeft,
+      whiteKingAlive,
+      blackKingAlive,
+      winner,
+      selectedPiece,
+      layout,
+      boardStateTracker,
+    } = JSON.parse(state);
+
+    this.currentTurn.set(currentTurn);
+    this.numWhiteLeft.set(numWhiteLeft);
+    this.numBlackLeft.set(numBlackLeft);
+    this.whiteKingAlive.set(whiteKingAlive);
+    this.blackKingAlive.set(blackKingAlive);
+    this.winner.set(winner);
+    this.selectedPiece.set(selectedPiece);
+    this.layout.set(layout);
+    this.boardStateTracker.set(new Map(JSON.parse(boardStateTracker)));
+  }
+
+  setSelectedPiece([row, column]: number[]) {
     this.selectedPiece.set([row, column]);
   }
 
@@ -61,7 +116,7 @@ export class Board {
       column < 0 ||
       column > this.layout.get()[0].length - 1
     ) {
-      return [0, false];
+      return [-1, false];
     }
 
     const isKing = this.layout.get()[row][column] > 2;
@@ -69,8 +124,12 @@ export class Board {
     return [isKing ? this.layout.get()[row][column] - 2 : this.layout.get()[row][column], isKing];
   }
 
-  makeMove([y1, x1]: number[], [y2, x2]: number[], val: number) {
+  makeMove({ start, end }: Move) {
+    const [y1, x1] = start;
+    const [y2, x2] = end;
+
     const newBoard = this.layout.get();
+    const val = newBoard[y1][x1];
 
     newBoard[y2][x2] = val;
     newBoard[y1][x1] = 0;
@@ -85,11 +144,22 @@ export class Board {
       return prev;
     });
 
-    this.numMoves.set((prev) => prev + 1);
+    this.resetValidMoves();
+    this.processCaptures(y2, x2);
+
+    if (this.getAllValidMoves(this.currentTurn.get() === 1 ? 2 : 1).length === 0) {
+      return this.winner.set(this.currentTurn.get());
+    }
+
+    this.toggleTurn();
   }
 
-  simulateMove([y1, x1]: number[], [y2, x2]: number[], val: number) {
+  simulateMove({ start, end }: Move) {
+    const [y1, x1] = start;
+    const [y2, x2] = end;
+
     const board = rfdc()(this.layout.get());
+    const val = board[y1][x1];
 
     board[y2][x2] = val;
     board[y1][x1] = 0;
@@ -109,30 +179,34 @@ export class Board {
       switch (capturedPiece) {
         case 1: {
           this.winner.set(2);
-
-          return toast("Oh no, your king was captured!", { icon: "😭" });
+          return;
+          // return toast("Oh no, your king was captured!", { icon: "😭" });
         }
         case 2: {
           this.winner.set(1);
-
-          return toast("Congratulations, you captured their king!", { icon: "⚔" });
+          return;
+          // return toast("Congratulations, you captured their king!", { icon: "⚔" });
         }
       }
     }
 
     if (capturedPiece === 1) {
       this.numWhiteLeft.set((prev) => prev - 1);
+      // console.log("Black captures white!");
 
-      toast("Your opponent captured one of your pawns!", { icon: "💀" });
+      // toast("Your opponent captured one of your pawns!", { icon: "💀" });
     } else {
       this.numBlackLeft.set((prev) => prev - 1);
+      // console.log("White captures black!");
 
-      toast("You captured one of your opponent's pawns!", { icon: "🔥" });
+      // toast("You captured one of your opponent's pawns!", { icon: "🔥" });
     }
 
     if (this.numBlackLeft.get() === 0) {
+      // console.log("White wins!");
       this.winner.set(1);
     } else if (this.numWhiteLeft.get() === 0) {
+      // console.log("Black wins!");
       this.winner.set(2);
     }
   }
@@ -157,7 +231,33 @@ export class Board {
     return [before, after === pos ? 8 : after];
   }
 
-  getValidMoves(row: number, column: number, isKing = false, val: number) {
+  getAllValidMoves(forPlayer = 0) {
+    const moves: Move[] = [];
+
+    for (let row = 0; row < this.layout.get().length; row++) {
+      for (let col = 0; col < this.layout.get()[row].length; col++) {
+        // Prevent searching moves for unwanted players.
+        if (forPlayer !== 0 && this.layout.get()[row][col] !== forPlayer) {
+          continue;
+        }
+
+        const [vertical, horizontal] = this.getValidMoves(row, col);
+
+        moves.push(...vertical.map((val) => ({ start: [row, col], end: [val, col] })));
+        moves.push(...horizontal.map((val) => ({ start: [row, col], end: [row, val] })));
+      }
+    }
+
+    return moves;
+  }
+
+  getValidMoves(row: number, column: number) {
+    const val = this.layout.get()[row][column];
+
+    if (val === 0) return [[], []];
+
+    const isKing = val > 2;
+
     const vertical = this.layout.get().map((row) => row[column]);
     const horizontal = this.layout.get()[row];
 
@@ -176,7 +276,9 @@ export class Board {
       })
       .filter((i) => i > vertBefore && i < vertAfter && i !== row)
       .filter((i) => {
-        const simulatedState = this.simulateMove([row, column], [i, column], val).flat().join("");
+        const simulatedState = this.simulateMove({ start: [row, column], end: [i, column] })
+          .flat()
+          .join("");
 
         return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 3;
       });
@@ -191,7 +293,9 @@ export class Board {
       })
       .filter((i) => i > horizBefore && i < horizAfter && i !== column)
       .filter((i) => {
-        const simulatedState = this.simulateMove([row, column], [row, i], val).flat().join("");
+        const simulatedState = this.simulateMove({ start: [row, column], end: [row, i] })
+          .flat()
+          .join("");
 
         return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 3;
       });
@@ -222,9 +326,9 @@ export class Board {
 
       if (val !== opponentVal) continue;
 
-      if (isKing && this.isSurroundedOnAllSides(y, x)) {
+      if (isKing && (this.isSurroundedOnAllSides(y, x) || this.isCornered(y, x))) {
         this.doCapture(y, x, true);
-      } else if (this.isSurroundedOnOppositeSides(y, x) || this.isCornered(y, x)) {
+      } else if (!isKing && (this.isSurroundedOnOppositeSides(y, x) || this.isCornered(y, x))) {
         this.doCapture(y, x);
       }
     }
@@ -265,13 +369,13 @@ export class Board {
       case row === 0 && column === 0: {
         return below === opponentVal && right === opponentVal;
       }
-      case row === 0 && column === 7: {
+      case row === 0 && column === this.boardWidth - 1: {
         return below === opponentVal && left === opponentVal;
       }
-      case row === 7 && column === 0: {
+      case row === this.boardHeight - 1 && column === 0: {
         return above === opponentVal && right === opponentVal;
       }
-      case row === 7 && column === 7: {
+      case row === this.boardHeight - 1 && column === this.boardWidth - 1: {
         return above === opponentVal && left === opponentVal;
       }
     }

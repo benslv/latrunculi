@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import styled, { createGlobalStyle } from "styled-components";
 
@@ -5,6 +6,7 @@ import { GameBoard } from "./components/Board";
 import { H1 } from "./components/Heading";
 import { Text } from "./components/Text";
 import { Board } from "./utils/board";
+import { Minimax } from "./utils/minimax";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -37,28 +39,33 @@ const Rules = styled.div`
 
 const board = new Board();
 
+const minimax = new Minimax();
+
 function App() {
   const winner = board.winner.use();
   const numBlackLeft = board.numBlackLeft.use();
   const numWhiteLeft = board.numWhiteLeft.use();
-  const numMoves = board.numMoves.use();
+  const currentTurn = board.currentTurn.use();
+
+  useEffect(() => {
+    if (currentTurn === 2) {
+      const { bestMove } = minimax.run(board.copyState());
+
+      console.log("Best Move:", bestMove);
+
+      board.makeMove(bestMove);
+    }
+  }, [currentTurn]);
 
   return (
     <Container>
       <GlobalStyle />
       <Toaster position="bottom-left" />
       <H1>Latrunculi</H1>
-      {winner === 0 ? (
-        <GameBoard board={board} />
-      ) : (
-        <>
-          <H1>We have a winner! Player {winner} wins!</H1>
-          <Text>The game was completed in {numMoves} moves.</Text>
-        </>
-      )}
+      <GameBoard board={board} />
+      {winner === 0 ? null : <H1>We have a winner! Player {winner} wins!</H1>}
       <Text># white left: {numWhiteLeft}</Text>
       <Text># black left: {numBlackLeft}</Text>
-      <Text># moves made: {numMoves}</Text>
       <Rules>
         <Text>
           Based on the rules at{" "}
@@ -108,6 +115,8 @@ function App() {
           </ul>
         </details>
       </Rules>
+      {/* <p>Debug Board</p>
+      <GameBoard board={minimax.board} /> */}
     </Container>
   );
 }

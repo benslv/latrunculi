@@ -25,17 +25,26 @@ const Wrapper = styled.div<PieceProps>`
 `;
 
 export const Piece = (props: PieceProps) => {
-  const { val, row, col, isKing, board } = props;
+  const { val, row, col, board } = props;
 
   const currentTurn = board.currentTurn.use();
+  const winner = board.winner.use();
+  const selectedPiece = board.selectedPiece.use();
 
   const handlePieceClick = () => {
-    if (val !== currentTurn) return;
+    if (val !== currentTurn || winner !== 0) return;
+
+    if (selectedPiece[0] === row && selectedPiece[1] === col) {
+      board.setSelectedPiece([0, 0]);
+      board.resetValidMoves();
+
+      return;
+    }
 
     board.setSelectedPiece([row, col]);
     board.resetValidMoves();
 
-    const [validVertical, validHorizontal] = board.getValidMoves(row, col, isKing, val);
+    const [validVertical, validHorizontal] = board.getValidMoves(row, col);
 
     for (const row of validVertical) {
       board.addValidMove(row, col);

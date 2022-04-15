@@ -53,8 +53,8 @@ export const Square = ({ val, row, column, handleSquareClick, board }: SquarePro
           currentTurn={currentTurn}
           row={row}
           col={column}
-          isKing={val > 2 ? true : false}
           board={board}
+          isKing={val > 2}
         />
       ) : null}
     </Cell>

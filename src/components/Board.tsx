@@ -6,7 +6,7 @@ import type { Board as BoardT } from "../utils/board";
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   width: max-content;
   gap: 5px;
 
@@ -28,12 +28,7 @@ export const GameBoard = ({ board }: { board: BoardT }) => {
     const boardVal = layout[y][x] > 2 ? layout[y][x] - 2 : layout[y][x];
 
     if (boardVal === currentTurn && board.isValidMove(row, column)) {
-      board.makeMove(selectedPiece, [row, column], layout[y][x]);
-      board.resetValidMoves();
-
-      board.processCaptures(row, column);
-
-      board.toggleTurn();
+      board.makeMove({ start: selectedPiece, end: [row, column] });
     }
   };
 
