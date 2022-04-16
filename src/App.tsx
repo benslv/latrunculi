@@ -137,6 +137,7 @@ function App() {
         <Grid.Col sm={12} lg={7}>
           <Center>
             <GameBoard board={board} />
+            <Text>Search depth: {aiDepth}</Text>
           </Center>
         </Grid.Col>
       </Grid>
