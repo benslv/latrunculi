@@ -10,7 +10,7 @@ function App() {
   const [board, setBoard] = useState(new Board());
   const [minimax, setMinimax] = useState(new Minimax());
   const [history, setHistory] = useState<string>(localStorage.getItem("gameHistory") ?? "");
-  const [aiDepth, setAiDepth] = useState(7);
+  const [aiDepth, setAiDepth] = useState(1);
   const [modalOpened, setModalOpened] = useState(false);
 
   const winner = board.winner.use();
@@ -40,10 +40,10 @@ function App() {
     const wins = history.match(/W/g)?.length ?? 0;
     const losses = history.match(/L/g)?.length ?? 0;
 
-    const difficulty = 2 + wins - losses;
+    const difficulty = Math.floor(1 + 0.5 * (wins - losses));
 
     // Sets AI search depth to between 1 and 6 inclusive.
-    setAiDepth(Math.max(Math.min(7, difficulty), 1));
+    setAiDepth(Math.max(Math.min(4, difficulty), 1));
   }, [history]);
 
   const reset = () => {
