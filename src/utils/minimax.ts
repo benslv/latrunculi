@@ -1,4 +1,5 @@
 import rfdc from "rfdc";
+import isEqual from "lodash.isequal";
 
 import { Board } from "./board";
 import type { Move } from "./board";
@@ -10,10 +11,10 @@ export class Minimax {
     this.board = new Board();
   }
 
-  run(state: string) {
+  run(state: string, depth = 3) {
     this.board.loadState(state);
 
-    return this.getMove([], 4, state, -Infinity, Infinity);
+    return this.getMove([], depth, state, -Infinity, Infinity);
   }
 
   getMove(
@@ -52,7 +53,7 @@ export class Minimax {
 
         const childValue = this.getMove(child, depth - 1, state, alpha, beta);
 
-        if (value.bestMove == { start: [0, 0], end: [0, 0] }) {
+        if (isEqual(value.bestMove, { start: [0, 0], end: [0, 0] })) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
         }
@@ -88,7 +89,7 @@ export class Minimax {
 
         const childValue = this.getMove(child, depth - 1, state, alpha, beta);
 
-        if (value.bestMove == { start: [0, 0], end: [0, 0] }) {
+        if (isEqual(value.bestMove, { start: [0, 0], end: [0, 0] })) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
         }
@@ -117,7 +118,11 @@ export class Minimax {
   }
 
   heuristic() {
+    if (this.board.numWhiteLeft.get() === 0) return Infinity;
+
+    if (this.board.numBlackLeft.get() === 0) return -Infinity;
+
     // return Math.PI * Math.atan(this.board.numWhiteLeft.get() - this.board.numBlackLeft.get());
-    return this.board.numBlackLeft.get() - this.board.numWhiteLeft.get();
+    return 2 * this.board.numBlackLeft.get() - this.board.numWhiteLeft.get();
   }
 }

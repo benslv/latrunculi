@@ -11,6 +11,7 @@
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
     "@types/styled-components": "^5.1.22",
+    "lodash.isequal": "^4.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.2.0",
@@ -47,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash.isequal": "^4.5.5",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "eslint": "^8.7.0",

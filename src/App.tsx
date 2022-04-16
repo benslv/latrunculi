@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import styled, { createGlobalStyle } from "styled-components";
 
 import { GameBoard } from "./components/Board";
 import { H1 } from "./components/Heading";
 import { Text } from "./components/Text";
+
 import { Board } from "./utils/board";
 import { Minimax } from "./utils/minimax";
 
@@ -47,15 +48,34 @@ function App() {
   const numWhiteLeft = board.numWhiteLeft.use();
   const currentTurn = board.currentTurn.use();
 
+  const [history, setHistory] = useState<string | null>(null);
+  const [aiDepth, setAiDepth] = useState(3);
+
   useEffect(() => {
     if (currentTurn === 2) {
-      const { bestMove } = minimax.run(board.copyState());
+      const { bestMove } = minimax.run(board.copyState(), aiDepth);
 
       console.log("Best Move:", bestMove);
 
       board.makeMove(bestMove);
     }
   }, [currentTurn]);
+
+  useEffect(() => {
+    if (winner === 1) {
+      setHistory((prev) => prev + "W");
+      setAiDepth((prev) => Math.min(6, prev + 2));
+      console.log("Set AI depth to", aiDepth);
+    } else if (winner === 2) {
+      setHistory((prev) => prev + "L");
+      setAiDepth((prev) => Math.max(1, prev - 1));
+      console.log("Set AI depth to", aiDepth);
+    }
+  }, [winner]);
+
+  useEffect(() => {
+    setHistory(localStorage.getItem("gameHistory"));
+  }, []);
 
   return (
     <Container>
@@ -66,6 +86,7 @@ function App() {
       {winner === 0 ? null : <H1>We have a winner! Player {winner} wins!</H1>}
       <Text># white left: {numWhiteLeft}</Text>
       <Text># black left: {numBlackLeft}</Text>
+      <Text>History: {history}</Text>
       <Rules>
         <Text>
           Based on the rules at{" "}
