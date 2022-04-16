@@ -1,6 +1,5 @@
 import { Button, Center, Container, Grid, List, Modal, Text, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
 
 import { GameBoard } from "./components/Board";
 
@@ -15,8 +14,6 @@ function App() {
   const [modalOpened, setModalOpened] = useState(false);
 
   const winner = board.winner.use();
-  const numBlackLeft = board.numBlackLeft.use();
-  const numWhiteLeft = board.numWhiteLeft.use();
   const currentTurn = board.currentTurn.use();
 
   useEffect(() => {
@@ -58,10 +55,8 @@ function App() {
 
   return (
     <Container fluid>
-      <Toaster position="bottom-left" />
       <Grid>
         <Grid.Col sm={12} lg={5}>
-          <Button onClick={() => setModalOpened(true)}>Open Modal</Button>
           <Title order={1}>Latrunculi</Title>
           <Text>
             Latrunculi is an ancient Roman board game that has now been brought to the modern world
@@ -69,9 +64,19 @@ function App() {
             you'll even get good enough to beat it!{" "}
           </Text>
 
-          <Text># white left: {numWhiteLeft}</Text>
-          <Text># black left: {numBlackLeft}</Text>
-          <Text>History: {history}</Text>
+          <Text>
+            Have a read of the rules below to familiarise yourself with the game, then hop right in!
+          </Text>
+          <Title order={3}>Getting Started</Title>
+          <List>
+            <List.Item>You play as White, and get to move first.</List.Item>
+            <List.Item>Click on a piece to see its available moves (the orange squares).</List.Item>
+            <List.Item>Click on an orange square to move your piece there.</List.Item>
+            <List.Item>
+              The piece surrounded by a red circle is your king. Take care of it!
+            </List.Item>
+          </List>
+
           <Title order={2}>Rules</Title>
           <List>
             <List.Item>
@@ -83,8 +88,8 @@ function App() {
               Pawns move like rooks in chess. Kings move similarly, but only 1 square at a time.
             </List.Item>
             <List.Item>
-              Pawn captures are made by surrounding an opposing piece on two opposing sides (i.e.,
-              in a line) with two of your own pieces; the edge of the board does not count as one of
+              Pawn captures are made by surrounding an opposing piece on two opposing sides (i.e. in
+              a line) with two of your own pieces; the edge of the board does not count as one of
               your pieces. The main exception is that captures of a pawn on a corner are made by
               surrounding the opposing piece on the two exposed sides.
             </List.Item>
@@ -102,7 +107,7 @@ function App() {
             </List.Item>
             <List.Item>
               A player wins by:
-              <ul>
+              <List>
                 <List.Item>
                   Immobilizing the opponent's king, even if the opponent's own pieces are blocking
                   it on some or all sides. This can happen even if the king is not surrounded on all
@@ -112,16 +117,16 @@ function App() {
                 <List.Item>
                   Having more pieces on the board after 50 moves are made with no capture.
                 </List.Item>
-              </ul>
+              </List>
             </List.Item>
           </List>
+          <Button onClick={() => setModalOpened(true)}>Open Modal</Button>
         </Grid.Col>
         <Grid.Col sm={12} lg={7}>
           <Center>
             <GameBoard board={board} />
           </Center>
         </Grid.Col>
-        {winner === 0 ? null : <></>}
       </Grid>
 
       <Modal opened={modalOpened} onClose={() => setModalOpened(false)}>
