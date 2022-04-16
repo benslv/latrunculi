@@ -55,9 +55,5 @@ export const Piece = (props: PieceProps) => {
     }
   };
 
-  return (
-    <Wrapper {...props} onClick={() => handlePieceClick()}>
-      {val}
-    </Wrapper>
-  );
+  return <Wrapper {...props} onClick={() => handlePieceClick()} />;
 };
