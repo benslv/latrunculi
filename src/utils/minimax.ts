@@ -72,9 +72,7 @@ export class Minimax {
           break;
         }
 
-        if (value.score >= alpha) {
-          alpha = value.score;
-        }
+        alpha = Math.max(alpha, value.score);
       }
     } else {
       value.score = -Infinity;
@@ -110,9 +108,7 @@ export class Minimax {
           break;
         }
 
-        if (value.score <= beta) {
-          beta = value.score;
-        }
+        beta = Math.min(beta, value.score);
       }
     }
 
