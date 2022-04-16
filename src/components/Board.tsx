@@ -6,7 +6,7 @@ import type { Board as BoardT } from "../utils/board";
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   width: max-content;
   gap: 5px;
 

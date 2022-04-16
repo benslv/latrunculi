@@ -8,12 +8,14 @@ export type Move = {
 
 export class Board {
   numMoves: Entity<number>;
+  numMovesNoCapture: Entity<number>;
   currentTurn: Entity<number>;
   numWhiteLeft: Entity<number>;
   numBlackLeft: Entity<number>;
   whiteKingAlive: Entity<boolean>;
   blackKingAlive: Entity<boolean>;
   winner: Entity<number>;
+  winMessage: Entity<string>;
   selectedPiece: Entity<number[]>;
   layout: Entity<number[][]>;
   validMoves: Entity<string[]>;
@@ -23,6 +25,7 @@ export class Board {
 
   constructor() {
     this.numMoves = entity(0);
+    this.numMovesNoCapture = entity(0);
 
     this.currentTurn = entity(1);
 
@@ -33,18 +36,25 @@ export class Board {
     this.blackKingAlive = entity(true) as Entity<boolean>;
 
     this.winner = entity(0);
+    this.winMessage = entity("");
 
     this.selectedPiece = entity([-1, -1]);
 
+    // this.layout = entity([
+    //   [2, 2, 2, 2, 2, 2, 2, 2],
+    //   [0, 0, 0, 0, 4, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 3, 0, 0, 0, 0],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    // ]);
+
     this.layout = entity([
-      [2, 2, 2, 2, 2, 2, 2, 2],
-      [0, 0, 0, 0, 4, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 3, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 1],
+      [0, 1, 1],
+      [1, 4, 0],
+      [0, 1, 0],
     ]);
 
     this.boardWidth = this.layout.get()[0].length;
@@ -140,7 +150,24 @@ export class Board {
     this.processCaptures(y2, x2);
 
     if (this.getAllValidMoves(this.currentTurn.get() === 1 ? 2 : 1).length === 0) {
+      this.winMessage.set("Black has no valid moves from this point, meaning you win!");
       return this.winner.set(this.currentTurn.get());
+    }
+
+    this.numMoves.set((prev) => prev + 1);
+    this.numMovesNoCapture.set((prev) => prev + 1);
+
+    if (this.numMovesNoCapture.get() == 50) {
+      if (this.blackKingAlive.get() >= this.whiteKingAlive.get()) {
+        this.winner.set(2);
+        this.winMessage.set(
+          "50 moves and no capture. Your opponent wins this round with more (or equal) pieces!",
+        );
+        return;
+      }
+      this.winner.set(1);
+      this.winMessage.set("50 moves and no capture. You win this round with more pieces!");
+      return;
     }
 
     this.toggleTurn();
@@ -167,14 +194,19 @@ export class Board {
       return prev;
     });
 
+    this.numMovesNoCapture.set(0);
+
     if (isKing) {
       switch (capturedPiece) {
         case 1: {
           this.winner.set(2);
+          this.winMessage.set("Your opponent successfully captured your king, so they win!");
           return;
         }
         case 2: {
           this.winner.set(1);
+          this.winMessage.set("You successfully captured your opponent's king, so you win!");
+
           return;
         }
       }
@@ -188,8 +220,10 @@ export class Board {
 
     if (this.numBlackLeft.get() === 0) {
       this.winner.set(1);
+      this.winMessage.set("You captured all of your opponent's pawns. Well done!");
     } else if (this.numWhiteLeft.get() === 0) {
       this.winner.set(2);
+      this.winMessage.set("Your opponent captured all of your pawns. Unlucky...");
     }
   }
 

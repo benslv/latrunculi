@@ -14,7 +14,9 @@ function App() {
   const [modalOpened, setModalOpened] = useState(false);
 
   const winner = board.winner.use();
+  const winMessage = board.winMessage.use();
   const currentTurn = board.currentTurn.use();
+  const numMoves = board.numMoves.use();
 
   useEffect(() => {
     if (currentTurn === 2) {
@@ -143,13 +145,18 @@ function App() {
       </Grid>
 
       <Modal opened={modalOpened} onClose={() => setModalOpened(false)}>
-        <Title order={2}>Player {winner} wins!</Title>
+        <Title order={2}>{winner === 1 ? "You win!" : "You lose..."}</Title>
+        <Space h="sm" />
+        <Text>{winMessage}</Text>
+        <Space h="xs" />
+        <Text>Number of moves made: {numMoves +1}</Text>
+        <Space h="sm" />
         <Button
           onClick={() => {
             reset();
             setModalOpened(false);
           }}>
-          Play Again
+          Play Again!
         </Button>
       </Modal>
     </Container>
