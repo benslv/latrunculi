@@ -135,7 +135,7 @@ function App() {
           </List>
         </Grid.Col>
         <Grid.Col sm={12} lg={7}>
-          <Center sx={{ height: "100%" }}>
+          <Center>
             <GameBoard board={board} />
           </Center>
         </Grid.Col>
