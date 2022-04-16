@@ -38,8 +38,8 @@ export class Board {
     this.selectedPiece = entity([-1, -1]);
 
     this.layout = entity([
-      [2, 2, 2, 2, 2, 2, 2, 2],
-      [0, 0, 0, 0, 4, 0, 0, 0],
+      [2, 0, 1, 0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 4, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0],
@@ -230,7 +230,7 @@ export class Board {
     for (let row = 0; row < this.layout.get().length; row++) {
       for (let col = 0; col < this.layout.get()[row].length; col++) {
         // Prevent searching moves for unwanted players.
-        if (forPlayer !== 0 && this.layout.get()[row][col] !== forPlayer) {
+        if (forPlayer !== 0 && this.layout.get()[row][col] - 2 !== forPlayer) {
           continue;
         }
 
