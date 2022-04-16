@@ -38,18 +38,16 @@ const Rules = styled.div`
   width: 100%;
 `;
 
-const board = new Board();
-
-const minimax = new Minimax();
-
 function App() {
+  const [board, setBoard] = useState(new Board());
+  const [minimax, setMinimax] = useState(new Minimax());
+  const [history, setHistory] = useState<string>(localStorage.getItem("gameHistory") ?? "");
+  const [aiDepth, setAiDepth] = useState(3);
+
   const winner = board.winner.use();
   const numBlackLeft = board.numBlackLeft.use();
   const numWhiteLeft = board.numWhiteLeft.use();
   const currentTurn = board.currentTurn.use();
-
-  const [history, setHistory] = useState<string | null>(null);
-  const [aiDepth, setAiDepth] = useState(3);
 
   useEffect(() => {
     if (currentTurn === 2) {
@@ -64,18 +62,27 @@ function App() {
   useEffect(() => {
     if (winner === 1) {
       setHistory((prev) => prev + "W");
-      setAiDepth((prev) => Math.min(6, prev + 2));
-      console.log("Set AI depth to", aiDepth);
     } else if (winner === 2) {
       setHistory((prev) => prev + "L");
-      setAiDepth((prev) => Math.max(1, prev - 1));
-      console.log("Set AI depth to", aiDepth);
     }
   }, [winner]);
 
   useEffect(() => {
-    setHistory(localStorage.getItem("gameHistory"));
-  }, []);
+    localStorage.setItem("gameHistory", history);
+
+    const wins = history.match(/W/g)?.length ?? 0;
+    const losses = history.match(/L/g)?.length ?? 0;
+
+    const difficulty = 3 + 2 * wins - losses;
+
+    // Sets AI search depth to between 1 and 6 inclusive.
+    setAiDepth(Math.max(Math.min(6, difficulty), 1));
+  }, [history]);
+
+  const reset = () => {
+    setBoard(new Board());
+    setMinimax(new Minimax());
+  };
 
   return (
     <Container>
@@ -83,7 +90,12 @@ function App() {
       <Toaster position="bottom-left" />
       <H1>Latrunculi</H1>
       <GameBoard board={board} />
-      {winner === 0 ? null : <H1>We have a winner! Player {winner} wins!</H1>}
+      {winner === 0 ? null : (
+        <>
+          <H1>We have a winner! Player {winner} wins!</H1>
+          <button onClick={reset}>Reset</button>
+        </>
+      )}
       <Text># white left: {numWhiteLeft}</Text>
       <Text># black left: {numBlackLeft}</Text>
       <Text>History: {history}</Text>
@@ -136,8 +148,8 @@ function App() {
           </ul>
         </details>
       </Rules>
-      {/* <p>Debug Board</p>
-      <GameBoard board={minimax.board} /> */}
+      <p>Debug Board</p>
+      <GameBoard board={minimax.board} />
     </Container>
   );
 }
