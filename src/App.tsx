@@ -10,7 +10,7 @@ function App() {
   const [board, setBoard] = useState(new Board());
   const [minimax, setMinimax] = useState(new Minimax());
   const [history, setHistory] = useState<string>(localStorage.getItem("gameHistory") ?? "");
-  const [aiDepth, setAiDepth] = useState(2);
+  const [aiDepth, setAiDepth] = useState(7);
   const [modalOpened, setModalOpened] = useState(false);
 
   const winner = board.winner.use();
