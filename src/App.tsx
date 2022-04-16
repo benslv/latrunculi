@@ -1,15 +1,4 @@
-import {
-  Button,
-  Center,
-  Container,
-  Grid,
-  List,
-  Modal,
-  ScrollArea,
-  Space,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Button, Center, Container, Grid, List, Modal, Space, Text, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import { GameBoard } from "./components/Board";
