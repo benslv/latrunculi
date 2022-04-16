@@ -43,7 +43,7 @@ function App() {
     const difficulty = 2 + wins - losses;
 
     // Sets AI search depth to between 1 and 6 inclusive.
-    setAiDepth(Math.max(Math.min(4, difficulty), 1));
+    setAiDepth(Math.max(Math.min(7, difficulty), 1));
   }, [history]);
 
   const reset = () => {
