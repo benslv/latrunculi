@@ -73,10 +73,10 @@ function App() {
     const wins = history.match(/W/g)?.length ?? 0;
     const losses = history.match(/L/g)?.length ?? 0;
 
-    const difficulty = 3 + 2 * wins - losses;
+    const difficulty = 2 + wins - losses;
 
     // Sets AI search depth to between 1 and 6 inclusive.
-    setAiDepth(Math.max(Math.min(6, difficulty), 1));
+    setAiDepth(Math.max(Math.min(4, difficulty), 1));
   }, [history]);
 
   const reset = () => {
@@ -99,6 +99,7 @@ function App() {
       <Text># white left: {numWhiteLeft}</Text>
       <Text># black left: {numBlackLeft}</Text>
       <Text>History: {history}</Text>
+      <Text>{aiDepth}</Text>
       <Rules>
         <Text>
           Based on the rules at{" "}
