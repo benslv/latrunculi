@@ -173,33 +173,23 @@ export class Board {
         case 1: {
           this.winner.set(2);
           return;
-          // return toast("Oh no, your king was captured!", { icon: "😭" });
         }
         case 2: {
           this.winner.set(1);
           return;
-          // return toast("Congratulations, you captured their king!", { icon: "⚔" });
         }
       }
     }
 
     if (capturedPiece === 1) {
       this.numWhiteLeft.set((prev) => prev - 1);
-      // console.log("Black captures white!");
-
-      // toast("Your opponent captured one of your pawns!", { icon: "💀" });
     } else {
       this.numBlackLeft.set((prev) => prev - 1);
-      // console.log("White captures black!");
-
-      // toast("You captured one of your opponent's pawns!", { icon: "🔥" });
     }
 
     if (this.numBlackLeft.get() === 0) {
-      // console.log("White wins!");
       this.winner.set(1);
     } else if (this.numWhiteLeft.get() === 0) {
-      // console.log("Black wins!");
       this.winner.set(2);
     }
   }

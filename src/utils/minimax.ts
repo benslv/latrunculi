@@ -44,8 +44,6 @@ export class Minimax {
 
       const allValidMoves = this.board.getAllValidMoves(1);
 
-      // console.log(allValidMoves.length);
-
       for (const move of allValidMoves) {
         const child = rfdc()(path);
 
@@ -79,8 +77,6 @@ export class Minimax {
       value.score = -Infinity;
 
       const allValidMoves = this.board.getAllValidMoves(2);
-
-      console.log("# valid moves for black:", allValidMoves.length);
 
       for (const move of allValidMoves) {
         const child = rfdc()(path);

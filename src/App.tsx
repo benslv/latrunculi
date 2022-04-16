@@ -20,8 +20,6 @@ function App() {
     if (currentTurn === 2) {
       const { bestMove } = minimax.run(board.copyState(), aiDepth);
 
-      console.log("Best Move:", bestMove);
-
       board.makeMove(bestMove);
     }
   }, [currentTurn]);
@@ -136,7 +134,7 @@ function App() {
             reset();
             setModalOpened(false);
           }}>
-          Reset
+          Play Again
         </Button>
       </Modal>
 
