@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/react-latrunculi/static/js/main.a5cb01c6.js",
+    "main.js": "/react-latrunculi/static/js/main.d6eb65a5.js",
     "index.html": "/react-latrunculi/index.html",
-    "main.a5cb01c6.js.map": "/react-latrunculi/static/js/main.a5cb01c6.js.map"
+    "main.d6eb65a5.js.map": "/react-latrunculi/static/js/main.d6eb65a5.js.map"
   },
   "entrypoints": [
-    "static/js/main.a5cb01c6.js"
+    "static/js/main.d6eb65a5.js"
   ]
 }
