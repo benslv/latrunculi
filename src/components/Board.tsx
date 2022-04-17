@@ -25,7 +25,7 @@ export const GameBoard = ({ board }: { board: BoardT }) => {
     // Check that selected piece equals current player...
     const [y, x] = selectedPiece;
 
-    const boardVal = layout[y][x] > 2 ? layout[y][x] - 2 : layout[y][x];
+    const boardVal = board.getBoardValue(y, x)[0];
 
     if (boardVal === currentTurn && board.isValidMove(row, column)) {
       board.makeMove({ start: selectedPiece, end: [row, column] });
