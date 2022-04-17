@@ -6,11 +6,13 @@ import { GameBoard } from "./components/Board";
 import { Board } from "./utils/board";
 import { Minimax } from "./utils/minimax";
 
+const startingDiffculty = 3;
+
 function App() {
   const [board, setBoard] = useState(new Board());
   const [minimax, setMinimax] = useState(new Minimax());
   const [history, setHistory] = useState<string>(localStorage.getItem("gameHistory") ?? "");
-  const [aiDepth, setAiDepth] = useState(1);
+  const [aiDepth, setAiDepth] = useState(startingDiffculty);
   const [modalOpened, setModalOpened] = useState(false);
 
   const winner = board.winner.use();
@@ -42,10 +44,13 @@ function App() {
     const wins = history.match(/W/g)?.length ?? 0;
     const losses = history.match(/L/g)?.length ?? 0;
 
-    const difficulty = Math.floor(1 + 0.5 * (wins - losses));
+    const calcDiffculty = Math.floor(startingDiffculty + wins - losses);
+
+    const minDifficulty = 1;
+    const maxDifficulty = 4;
 
     // Sets AI search depth to between 1 and 6 inclusive.
-    setAiDepth(Math.max(Math.min(4, difficulty), 1));
+    setAiDepth(Math.max(Math.min(maxDifficulty, calcDiffculty), minDifficulty));
   }, [history]);
 
   const reset = () => {
@@ -72,10 +77,10 @@ function App() {
           <Space h={"sm"} />
           <Text>
             <b>Another note:</b> It's likely that this'll run a bit slowly on a lot of people's
-            devices, mainly when the computer is figuring out its next move. Unfortunately, despite
+            devices when the computer is figuring out its next move (especially if you start winning a lot!). Unfortunately, despite
             the optimisations I've put in place, the algorithm being used is still pretty slow
             simply due to the sheer number of possible moves that can be made each turn. Don't worry
-            if the application seems to freeze after you've made your move. It should eventually
+            if the application seems to freeze after you've made your move. It'll eventually
             come back to life 😄
           </Text>
           <Space h={"sm"} />
@@ -149,7 +154,7 @@ function App() {
         <Space h="sm" />
         <Text>{winMessage}</Text>
         <Space h="xs" />
-        <Text>Number of moves made: {numMoves +1}</Text>
+        <Text>Number of moves made: {numMoves + 1}</Text>
         <Space h="sm" />
         <Button
           onClick={() => {
