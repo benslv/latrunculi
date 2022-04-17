@@ -143,9 +143,14 @@ export class Board {
     this.resetValidMoves();
     this.processCaptures(y2, x2);
 
-    if (this.getAllValidMoves(this.currentTurn.get() === 1 ? 2 : 1).length === 0) {
+    if (this.getAllValidMoves(2).length === 0) {
       this.winMessage.set("Black has no valid moves from this point, meaning you win!");
-      return this.winner.set(this.currentTurn.get());
+      return this.winner.set(1);
+    }
+
+    if (this.getAllValidMoves(1).length === 0) {
+      this.winMessage.set("You have no valid moves from this point, meaning your opponent wins!");
+      return this.winner.set(2);
     }
 
     this.numMoves.set((prev) => prev + 1);
@@ -194,13 +199,12 @@ export class Board {
       switch (capturedPiece) {
         case 1: {
           this.winner.set(2);
-          this.winMessage.set("Your opponent successfully captured your king, so they win!");
+          this.winMessage.set("Your opponent successfully immobilised your king, so they win!");
           return;
         }
         case 2: {
           this.winner.set(1);
-          this.winMessage.set("You successfully captured your opponent's king, so you win!");
-
+          this.winMessage.set("You successfully immobilised your opponent's king, so you win!");
           return;
         }
       }
@@ -356,9 +360,9 @@ export class Board {
   }
 
   isSurroundedOnAllSides(row: number, column: number) {
-    const opponentVal = this.currentTurn.get();
+    // const opponentVal = this.currentTurn.get();
 
-    return this.getAdjacentSquares(row, column).every((val) => val === opponentVal);
+    return this.getAdjacentSquares(row, column).every((val) => val === 1 || val === 2);
   }
 
   getAdjacentSquares(row: number, column: number) {
