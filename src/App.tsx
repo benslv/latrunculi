@@ -49,8 +49,12 @@ function App() {
     const minDifficulty = 1;
     const maxDifficulty = 4;
 
+    const newDifficulty = Math.max(Math.min(maxDifficulty, calcDiffculty), minDifficulty);
+
+    console.log("Search depth:", newDifficulty);
+
     // Sets AI search depth to between 1 and 6 inclusive.
-    setAiDepth(Math.max(Math.min(maxDifficulty, calcDiffculty), minDifficulty));
+    setAiDepth(newDifficulty);
   }, [history]);
 
   const reset = () => {
@@ -144,7 +148,6 @@ function App() {
         <Grid.Col sm={12} lg={7}>
           <Center>
             <GameBoard board={board} />
-            <Text>Search depth: {aiDepth}</Text>
           </Center>
         </Grid.Col>
       </Grid>
