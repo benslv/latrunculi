@@ -77,11 +77,11 @@ function App() {
           <Space h={"sm"} />
           <Text>
             <b>Another note:</b> It's likely that this'll run a bit slowly on a lot of people's
-            devices when the computer is figuring out its next move (especially if you start winning a lot!). Unfortunately, despite
-            the optimisations I've put in place, the algorithm being used is still pretty slow
-            simply due to the sheer number of possible moves that can be made each turn. Don't worry
-            if the application seems to freeze after you've made your move. It'll eventually
-            come back to life 😄
+            devices when the computer is figuring out its next move (especially if you start winning
+            a lot!). Unfortunately, despite the optimisations I've put in place, the algorithm being
+            used is still pretty slow simply due to the sheer number of possible moves that can be
+            made each turn. Don't worry if the application seems to freeze after you've made your
+            move. It'll eventually come back to life 😄
           </Text>
           <Space h={"sm"} />
           <Text>
