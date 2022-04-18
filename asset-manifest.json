@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.js": "/react-latrunculi/static/js/main.4543f378.js",
-    "worker.js": "/react-latrunculi/a5be06b05517c7f42be8.worker.js",
+    "main.js": "/react-latrunculi/static/js/main.1fc1817b.js",
+    "worker.js": "/react-latrunculi/2b23a48c8a8eeb330d49.worker.js",
     "index.html": "/react-latrunculi/index.html",
-    "main.4543f378.js.map": "/react-latrunculi/static/js/main.4543f378.js.map"
+    "main.1fc1817b.js.map": "/react-latrunculi/static/js/main.1fc1817b.js.map"
   },
   "entrypoints": [
-    "static/js/main.4543f378.js"
+    "static/js/main.1fc1817b.js"
   ]
 }
