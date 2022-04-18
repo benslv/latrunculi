@@ -340,7 +340,11 @@ export class Board {
 
       if (val !== opponentVal) continue;
 
-      if (isKing && (this.isSurroundedOnAllSides(y, x) || this.isCornered(y, x))) {
+      if (
+        isKing &&
+        this.getValidMoves(y, x)[0].length === 0 &&
+        this.getValidMoves(y, x)[1].length === 0
+      ) {
         this.doCapture(y, x, true);
       } else if (!isKing && (this.isSurroundedOnOppositeSides(y, x) || this.isCornered(y, x))) {
         this.doCapture(y, x);
