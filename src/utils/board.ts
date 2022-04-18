@@ -42,21 +42,21 @@ export class Board {
 
     this.selectedPiece = entity([-1, -1]);
 
-    // this.layout = entity([
-    //   [2, 2, 2, 2, 2, 2, 2, 2],
-    //   [0, 0, 0, 0, 4, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 3, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 1, 1, 1],
-    // ]);
-
     this.layout = entity([
-      [1, 0],
-      [0, 2],
+      [2, 2, 2, 2, 2, 2, 2, 2],
+      [0, 0, 0, 0, 4, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 3, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 1, 1, 1],
     ]);
+
+    // this.layout = entity([
+    //   [1, 0],
+    //   [0, 2],
+    // ]);
 
     this.boardWidth = this.layout.get()[0].length;
     this.boardHeight = this.layout.get().length;
@@ -138,20 +138,12 @@ export class Board {
     newBoard[y1][x1] = 0;
 
     this.layout.set(newBoard);
-    2;
 
     const newBoardState = newBoard.flat().join("");
     this.boardStateTracker.set(newBoardState, (this.boardStateTracker.get(newBoardState) ?? 0) + 1);
 
-    console.log(this.boardStateTracker);
-
     this.resetValidMoves();
     this.processCaptures(y2, x2);
-
-    console.table({
-      white: this.getAllValidMoves(1).length,
-      black: this.getAllValidMoves(2).length,
-    });
 
     const opponentVal = this.currentTurn.get() === 1 ? 2 : 1;
 
@@ -159,7 +151,7 @@ export class Board {
       this.winMessage.set(
         opponentVal == 2
           ? "Black has no valid moves from this point, meaning you win!"
-          : "WHIte has no valid moves from this point, meaning your opponent wins!",
+          : "White has no valid moves from this point, meaning your opponent wins!",
       );
       return this.winner.set(this.currentTurn.get());
     }

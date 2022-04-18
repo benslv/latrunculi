@@ -30,7 +30,7 @@ export class Minimax {
       this.board.makeMove(move);
     }
 
-    if (depth === 0) {
+    if (depth === 0 || this.isEndState()) {
       return { score: this.heuristic(), bestMove: path[0] };
     }
 
@@ -59,6 +59,7 @@ export class Minimax {
           value.bestMove = childValue.bestMove;
         }
 
+        // Randomly select between different moves of the same value.
         if (childValue.score === value.score && Math.random() < 0.1) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
@@ -90,6 +91,7 @@ export class Minimax {
           value.bestMove = childValue.bestMove;
         }
 
+        // Randomly select between different moves of the same value.
         if (childValue.score === value.score && Math.random() < 0.1) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
@@ -109,10 +111,21 @@ export class Minimax {
 
   heuristic() {
     if (this.board.numWhiteLeft.get() === 0) return Infinity;
-
     if (this.board.numBlackLeft.get() === 0) return -Infinity;
 
+    if (this.board.whiteKingAlive.get() === false) return Infinity;
+    if (this.board.blackKingAlive.get() === false) return -Infinity;
+
     // return Math.PI * Math.atan(this.board.numWhiteLeft.get() - this.board.numBlackLeft.get());
-    return 2 * this.board.numBlackLeft.get() - this.board.numWhiteLeft.get();
+    return 10 * this.board.numBlackLeft.get() - this.board.numWhiteLeft.get();
+  }
+
+  isEndState() {
+    return (
+      this.board.numWhiteLeft.get() === 0 ||
+      this.board.numBlackLeft.get() === 0 ||
+      this.board.whiteKingAlive.get() === false ||
+      this.board.blackKingAlive.get() === false
+    );
   }
 }
