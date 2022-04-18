@@ -1,4 +1,15 @@
-import { Button, Center, Container, Grid, List, Modal, Space, Text, Title } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Grid,
+  List,
+  Modal,
+  Space,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import { GameBoard } from "./components/Board";
@@ -19,6 +30,7 @@ function App() {
   const winMessage = board.winMessage.use();
   const currentTurn = board.currentTurn.use();
   const numMoves = board.numMoves.use();
+  const numMovesNoCapture = board.numMovesNoCapture.use();
 
   useEffect(() => {
     if (currentTurn === 2) {
@@ -144,15 +156,23 @@ function App() {
               </List>
             </List.Item>
           </List>
-          <Space h="md"/>
+          <Space h="md" />
           <Title order={3}>Known Issues</Title>
           <List>
-            <List.Item>Sometimes the AI will decide to "skip" a turn and not make any move. No idea why it happens, and the solution has evaded me for far too long. Just take it as a free extra turn, I suppose!</List.Item>
+            <List.Item>
+              Sometimes the AI will decide to "skip" a turn and not make any move. No idea why it
+              happens, and the solution has evaded me for far too long. Just take it as a free extra
+              turn, I suppose!
+            </List.Item>
           </List>
         </Grid.Col>
         <Grid.Col sm={12} lg={7}>
           <Center>
-            <GameBoard board={board} />
+            <Stack>
+              <GameBoard board={board} />
+              <Text>Moves so far: {numMoves}</Text>
+              <Text>Moves without capture: {numMovesNoCapture}</Text>
+            </Stack>
           </Center>
         </Grid.Col>
       </Grid>
