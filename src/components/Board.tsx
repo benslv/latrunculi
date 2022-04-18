@@ -14,6 +14,7 @@ const Wrapper = styled.div`
 `;
 
 export const GameBoard = ({ board }: { board: BoardT }) => {
+  const currentTurn = board.currentTurn.use();
   const selectedPiece = board.selectedPiece.use();
   const layout = board.layout.use();
 
@@ -26,7 +27,7 @@ export const GameBoard = ({ board }: { board: BoardT }) => {
 
     const boardVal = board.getBoardValue(y, x)[0];
 
-    if (boardVal === 1 && board.isValidMove(row, column)) {
+    if (boardVal === currentTurn && board.isValidMove(row, column)) {
       board.makeMove({ start: selectedPiece, end: [row, column] });
     }
   };

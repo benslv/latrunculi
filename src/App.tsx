@@ -48,7 +48,7 @@ function App() {
 
     const calcDiffculty = Math.floor(startingDiffculty + wins - losses);
 
-    const minDifficulty = 1;
+    const minDifficulty = 4;
     const maxDifficulty = 4;
 
     const newDifficulty = Math.max(Math.min(maxDifficulty, calcDiffculty), minDifficulty);

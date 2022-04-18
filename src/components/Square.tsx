@@ -40,6 +40,8 @@ const Cell = styled.div<CellProps>`
 export const Square = ({ val, row, column, handleSquareClick, board }: SquareProps) => {
   const isMoveCandidate = board.isValidMove(row, column);
 
+  const currentTurn = board.currentTurn.use();
+
   return (
     <Cell
       color={(row + column) % 2 == 0 ? "light" : "dark"}
@@ -49,6 +51,7 @@ export const Square = ({ val, row, column, handleSquareClick, board }: SquarePro
         <Piece
           val={val > 2 ? val - 2 : val}
           row={row}
+          currentTurn={currentTurn}
           col={column}
           board={board}
           isKing={val > 2}
