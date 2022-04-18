@@ -45,9 +45,7 @@ export class Minimax {
       const allValidMoves = this.board.getAllValidMoves(1);
 
       for (const move of allValidMoves) {
-        const child = rfdc()(path);
-
-        child.push(move);
+        const child = [...path, move];
 
         const childValue = this.getMove(child, depth - 1, state, alpha, beta);
 
@@ -56,7 +54,6 @@ export class Minimax {
           value.bestMove = childValue.bestMove;
         }
 
-        // Randomly decide to switch current move if new one is the same value.
         if (childValue.score < value.score) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
@@ -79,9 +76,7 @@ export class Minimax {
       const allValidMoves = this.board.getAllValidMoves(2);
 
       for (const move of allValidMoves) {
-        const child = rfdc()(path);
-
-        child.push(move);
+        const child = [...path, move];
 
         const childValue = this.getMove(child, depth - 1, state, alpha, beta);
 
@@ -90,7 +85,6 @@ export class Minimax {
           value.bestMove = childValue.bestMove;
         }
 
-        // Randomly decide to switch current move if new one is the same value.
         if (childValue.score > value.score) {
           value.score = childValue.score;
           value.bestMove = childValue.bestMove;
