@@ -3,7 +3,6 @@ import type { Board } from "../utils/board";
 
 type PieceProps = {
   val: number;
-  currentTurn: number;
   row: number;
   col: number;
   isKing?: boolean;
@@ -21,18 +20,17 @@ const Wrapper = styled.div<PieceProps>`
 
   border: ${({ isKing }) => (isKing ? "5px solid #B80C09" : "none")};
 
-  cursor: ${({ currentTurn, val }) => (val === currentTurn ? "pointer" : "not-allowed")};
+  cursor: ${({ val }) => (val === 1 ? "pointer" : "not-allowed")};
 `;
 
 export const Piece = (props: PieceProps) => {
   const { val, row, col, board } = props;
 
-  const currentTurn = board.currentTurn.use();
   const winner = board.winner.use();
   const selectedPiece = board.selectedPiece.use();
 
   const handlePieceClick = () => {
-    if (val !== currentTurn || winner !== 0) return;
+    if (val !== 1 || winner !== 0) return;
 
     if (selectedPiece[0] === row && selectedPiece[1] === col) {
       board.setSelectedPiece([-1, -1]);

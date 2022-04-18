@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import { GameBoard } from "./components/Board";
 
 import { Board } from "./utils/board";
-import { Minimax } from "./utils/minimax";
 
-const startingDiffculty = 3;
+import Worker from "./worker";
+
+const startingDiffculty = 2;
+
+const minimaxWorker = new Worker();
 
 function App() {
   const [board, setBoard] = useState(new Board());
-  const [minimax, setMinimax] = useState(new Minimax());
   const [history, setHistory] = useState<string>(localStorage.getItem("gameHistory") ?? "");
   const [aiDepth, setAiDepth] = useState(startingDiffculty);
   const [modalOpened, setModalOpened] = useState(false);
@@ -22,9 +24,9 @@ function App() {
 
   useEffect(() => {
     if (currentTurn === 2) {
-      const { bestMove } = minimax.run(board.copyState(), aiDepth);
-
-      board.makeMove(bestMove);
+      minimaxWorker
+        .run(board.copyState(), aiDepth)
+        .then(({ bestMove }) => board.makeMove(bestMove));
     }
   }, [currentTurn]);
 
@@ -59,7 +61,6 @@ function App() {
 
   const reset = () => {
     setBoard(new Board());
-    setMinimax(new Minimax());
   };
 
   return (
@@ -144,10 +145,14 @@ function App() {
               </List>
             </List.Item>
           </List>
-          <Space h="md"/>
+          <Space h="md" />
           <Title order={3}>Known Issues</Title>
           <List>
-            <List.Item>Sometimes the AI will decide to "skip" a turn and not make any move. No idea why it happens, and the solution has evaded me for far too long. Just take it as a free extra turn, I suppose!</List.Item>
+            <List.Item>
+              Sometimes the AI will decide to "skip" a turn and not make any move. No idea why it
+              happens, and the solution has evaded me for far too long. Just take it as a free extra
+              turn, I suppose!
+            </List.Item>
           </List>
         </Grid.Col>
         <Grid.Col sm={12} lg={7}>
