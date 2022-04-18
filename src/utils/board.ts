@@ -144,12 +144,16 @@ export class Board {
     this.processCaptures(y2, x2);
 
     if (this.getAllValidMoves(2).length === 0) {
-      this.winMessage.set("Black has no valid moves from this point, meaning you win!");
+      if (this.winMessage.get() === "") {
+        this.winMessage.set("Black has no valid moves from this point, meaning you win!");
+      }
       return this.winner.set(1);
     }
 
     if (this.getAllValidMoves(1).length === 0) {
-      this.winMessage.set("You have no valid moves from this point, meaning your opponent wins!");
+      if (this.winMessage.get() === "") {
+        this.winMessage.set("You have no valid moves from this point, meaning your opponent wins!");
+      }
       return this.winner.set(2);
     }
 
@@ -157,15 +161,19 @@ export class Board {
     this.numMovesNoCapture.set((prev) => prev + 1);
 
     if (this.numMovesNoCapture.get() == 50) {
-      if (this.blackKingAlive.get() >= this.whiteKingAlive.get()) {
+      if (this.numBlackLeft.get() >= this.numWhiteLeft.get()) {
         this.winner.set(2);
-        this.winMessage.set(
-          "50 moves and no capture. Your opponent wins this round with more (or equal) pieces!",
-        );
+        if (this.winMessage.get() === "") {
+          this.winMessage.set(
+            "50 moves and no capture. Your opponent wins this round with more (or equal) pieces!",
+          );
+        }
         return;
       }
       this.winner.set(1);
-      this.winMessage.set("50 moves and no capture. You win this round with more pieces!");
+      if (this.winMessage.get() === "") {
+        this.winMessage.set("50 moves and no capture. You win this round with more pieces!");
+      }
       return;
     }
 
@@ -199,12 +207,18 @@ export class Board {
       switch (capturedPiece) {
         case 1: {
           this.winner.set(2);
-          this.winMessage.set("Your opponent successfully immobilised your king, so they win!");
+          if (this.winMessage.get() === "") {
+            this.winMessage.set("Your opponent successfully immobilised your king, so they win!");
+          }
+
           return;
         }
         case 2: {
           this.winner.set(1);
-          this.winMessage.set("You successfully immobilised your opponent's king, so you win!");
+          if (this.winMessage.get() === "") {
+            this.winMessage.set("You successfully immobilised your opponent's king, so you win!");
+          }
+
           return;
         }
       }
@@ -218,10 +232,14 @@ export class Board {
 
     if (this.numBlackLeft.get() === 0) {
       this.winner.set(1);
-      this.winMessage.set("You captured all of your opponent's pawns. Well done!");
+      if (this.winMessage.get() === "") {
+        this.winMessage.set("You captured all of your opponent's pawns. Well done!");
+      }
     } else if (this.numWhiteLeft.get() === 0) {
       this.winner.set(2);
-      this.winMessage.set("Your opponent captured all of your pawns. Unlucky...");
+      if (this.winMessage.get() === "") {
+        this.winMessage.set("Your opponent captured all of your pawns. Unlucky...");
+      }
     }
   }
 
@@ -340,7 +358,13 @@ export class Board {
 
       if (val !== opponentVal) continue;
 
-      if (isKing && (this.isSurroundedOnAllSides(y, x) || this.isCornered(y, x))) {
+      console.log(this.getValidMoves(y, x));
+
+      if (
+        isKing &&
+        this.getValidMoves(y, x)[0].length === 0 &&
+        this.getValidMoves(y, x)[1].length === 0
+      ) {
         this.doCapture(y, x, true);
       } else if (!isKing && (this.isSurroundedOnOppositeSides(y, x) || this.isCornered(y, x))) {
         this.doCapture(y, x);
