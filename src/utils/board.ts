@@ -7,8 +7,10 @@ export type Move = {
 };
 
 export class Board {
-  numMoves: Entity<number>;
-  numMovesNoCapture: Entity<number>;
+  numMoves: number;
+  // numMoves: Entity<number>;
+  // numMovesNoCapture: Entity<number>;
+  numMovesNoCapture: number;
   currentTurn: Entity<number>;
   numWhiteLeft: Entity<number>;
   numBlackLeft: Entity<number>;
@@ -19,13 +21,13 @@ export class Board {
   selectedPiece: Entity<number[]>;
   layout: Entity<number[][]>;
   validMoves: Entity<string[]>;
-  boardStateTracker: Entity<Map<string, number>>;
+  boardStateTracker: Map<string, number>;
   boardWidth: number;
   boardHeight: number;
 
   constructor() {
-    this.numMoves = entity(0);
-    this.numMovesNoCapture = entity(0);
+    this.numMoves = 0;
+    this.numMovesNoCapture = 0;
 
     this.currentTurn = entity(1);
 
@@ -40,15 +42,20 @@ export class Board {
 
     this.selectedPiece = entity([-1, -1]);
 
+    // this.layout = entity([
+    //   [2, 2, 2, 2, 2, 2, 2, 2],
+    //   [0, 0, 0, 0, 4, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 3, 0, 0, 0, 0],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    // ]);
+
     this.layout = entity([
-      [2, 2, 2, 2, 2, 2, 2, 2],
-      [0, 0, 0, 0, 4, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 3, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0],
+      [0, 2],
     ]);
 
     this.boardWidth = this.layout.get()[0].length;
@@ -56,7 +63,7 @@ export class Board {
 
     this.validMoves = entity([""]);
 
-    this.boardStateTracker = entity(new Map());
+    this.boardStateTracker = new Map();
   }
 
   copyState(): string {
@@ -69,7 +76,7 @@ export class Board {
       winner: this.winner.get(),
       selectedPiece: this.selectedPiece.get(),
       layout: this.layout.get(),
-      boardStateTracker: JSON.stringify(Array.from(this.boardStateTracker.get().entries())),
+      boardStateTracker: JSON.stringify(Array.from(this.boardStateTracker.entries())),
     });
   }
 
@@ -94,7 +101,7 @@ export class Board {
     this.winner.set(winner);
     this.selectedPiece.set(selectedPiece);
     this.layout.set(layout);
-    this.boardStateTracker.set(new Map(JSON.parse(boardStateTracker)));
+    this.boardStateTracker = new Map(JSON.parse(boardStateTracker));
   }
 
   setSelectedPiece([row, column]: number[]) {
@@ -131,32 +138,36 @@ export class Board {
     newBoard[y1][x1] = 0;
 
     this.layout.set(newBoard);
+    2;
 
-    this.boardStateTracker.set((prev) => {
-      const boardState = newBoard.flat().join("");
+    const newBoardState = newBoard.flat().join("");
+    this.boardStateTracker.set(newBoardState, (this.boardStateTracker.get(newBoardState) ?? 0) + 1);
 
-      prev.set(boardState, (prev.get(boardState) ?? 0) + 1);
-
-      return prev;
-    });
+    console.log(this.boardStateTracker);
 
     this.resetValidMoves();
     this.processCaptures(y2, x2);
 
-    if (this.getAllValidMoves(2).length === 0) {
-      this.winMessage.set("Black has no valid moves from this point, meaning you win!");
-      return this.winner.set(1);
+    console.table({
+      white: this.getAllValidMoves(1).length,
+      black: this.getAllValidMoves(2).length,
+    });
+
+    const opponentVal = this.currentTurn.get() === 1 ? 2 : 1;
+
+    if (this.getAllValidMoves(opponentVal).length === 0) {
+      this.winMessage.set(
+        opponentVal == 2
+          ? "Black has no valid moves from this point, meaning you win!"
+          : "WHIte has no valid moves from this point, meaning your opponent wins!",
+      );
+      return this.winner.set(this.currentTurn.get());
     }
 
-    if (this.getAllValidMoves(1).length === 0) {
-      this.winMessage.set("You have no valid moves from this point, meaning your opponent wins!");
-      return this.winner.set(2);
-    }
+    this.numMoves += 1;
+    this.numMovesNoCapture += 1;
 
-    this.numMoves.set((prev) => prev + 1);
-    this.numMovesNoCapture.set((prev) => prev + 1);
-
-    if (this.numMovesNoCapture.get() == 50) {
+    if (this.numMovesNoCapture == 50) {
       if (this.blackKingAlive.get() >= this.whiteKingAlive.get()) {
         this.winner.set(2);
         this.winMessage.set(
@@ -193,7 +204,7 @@ export class Board {
       return prev;
     });
 
-    this.numMovesNoCapture.set(0);
+    this.numMovesNoCapture = 0;
 
     if (isKing) {
       switch (capturedPiece) {
@@ -294,7 +305,7 @@ export class Board {
           .flat()
           .join("");
 
-        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 3;
+        return (this.boardStateTracker.get(simulatedState) ?? 0) < 3;
       });
 
     const horizontalMoves = horizontal
@@ -311,7 +322,7 @@ export class Board {
           .flat()
           .join("");
 
-        return (this.boardStateTracker.get().get(simulatedState) ?? 0) < 3;
+        return (this.boardStateTracker.get(simulatedState) ?? 0) < 3;
       });
 
     return [verticalMoves, horizontalMoves];
