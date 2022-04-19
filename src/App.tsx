@@ -1,4 +1,15 @@
-import { Button, Center, Container, Grid, List, Modal, Space, Text, Title } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Grid,
+  List,
+  LoadingOverlay,
+  Modal,
+  Space,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import { GameBoard } from "./components/Board";
@@ -17,6 +28,8 @@ function App() {
   const [aiDepth, setAiDepth] = useState(startingDiffculty);
   const [modalOpened, setModalOpened] = useState(false);
 
+  const [thinking, setThinking] = useState(false);
+
   const winner = board.winner.use();
   const winMessage = board.winMessage.use();
   const currentTurn = board.currentTurn.use();
@@ -24,9 +37,11 @@ function App() {
 
   useEffect(() => {
     if (currentTurn === 2) {
-      minimaxWorker
-        .run(board.copyState(), aiDepth)
-        .then(({ bestMove }) => board.makeMove(bestMove));
+      setThinking(true);
+      minimaxWorker.run(board.copyState(), aiDepth).then(({ bestMove }) => {
+        board.makeMove(bestMove);
+        setThinking(false);
+      });
     }
   }, [currentTurn]);
 
@@ -156,7 +171,8 @@ function App() {
           </List>
         </Grid.Col>
         <Grid.Col sm={12} lg={7}>
-          <Center>
+          <Center sx={{ position: "relative" }}>
+            <LoadingOverlay visible={thinking} />
             <GameBoard board={board} />
           </Center>
         </Grid.Col>
