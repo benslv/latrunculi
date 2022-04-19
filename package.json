@@ -1,6 +1,6 @@
 {
   "name": "react-checkers",
-  "homepage": "https://benslv.github.io/react-latrunculi",
+  "homepage": "https://benslv.github.io/react-latrunculi-web-worker",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
