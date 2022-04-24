@@ -17,7 +17,7 @@ import { GameBoard } from "./components/Board";
 import { Board } from "./utils/board";
 import { Minimax } from "./utils/minimax";
 
-const startingDiffculty = 3;
+const startingDiffculty = 2;
 
 function App() {
   const [board, setBoard] = useState(new Board());
@@ -29,8 +29,8 @@ function App() {
   const winner = board.winner.use();
   const winMessage = board.winMessage.use();
   const currentTurn = board.currentTurn.use();
-  const numMoves = board.numMoves.use();
-  const numMovesNoCapture = board.numMovesNoCapture.use();
+  const numMoves = board.numMoves;
+  const numMovesNoCapture = board.numMovesNoCapture;
 
   useEffect(() => {
     if (currentTurn === 2) {
@@ -182,7 +182,7 @@ function App() {
         <Space h="sm" />
         <Text>{winMessage}</Text>
         <Space h="xs" />
-        <Text>Number of moves made: {numMoves + 1}</Text>
+        <Text>Number of moves made: {numMoves}</Text>
         <Space h="sm" />
         <Button
           onClick={() => {
