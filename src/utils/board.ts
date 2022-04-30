@@ -8,14 +8,12 @@ export type Move = {
 
 export class Board {
   numMoves: number;
-  // numMoves: Entity<number>;
-  // numMovesNoCapture: Entity<number>;
   numMovesNoCapture: number;
   currentTurn: Entity<number>;
-  numWhiteLeft: Entity<number>;
-  numBlackLeft: Entity<number>;
-  whiteKingAlive: Entity<boolean>;
-  blackKingAlive: Entity<boolean>;
+  numWhiteLeft: number;
+  numBlackLeft: number;
+  whiteKingAlive: boolean;
+  blackKingAlive: boolean;
   winner: Entity<number>;
   winMessage: Entity<string>;
   selectedPiece: Entity<number[]>;
@@ -31,26 +29,33 @@ export class Board {
 
     this.currentTurn = entity(1);
 
-    this.numWhiteLeft = entity(8);
-    this.numBlackLeft = entity(8);
+    this.numWhiteLeft = 4;
+    this.numBlackLeft = 4;
 
-    this.whiteKingAlive = entity(true) as Entity<boolean>;
-    this.blackKingAlive = entity(true) as Entity<boolean>;
+    this.whiteKingAlive = true;
+    this.blackKingAlive = true;
 
     this.winner = entity(0);
     this.winMessage = entity("");
 
     this.selectedPiece = entity([-1, -1]);
 
+    // this.layout = entity([
+    //   [2, 2, 2, 2, 2, 2, 2, 2],
+    //   [0, 0, 0, 0, 4, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [0, 0, 0, 3, 0, 0, 0, 0],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    // ]);
+
     this.layout = entity([
-      [2, 2, 2, 2, 2, 2, 2, 2],
-      [0, 0, 0, 0, 4, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 3, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1,0,0,0],
+      [0,0,0,0],
+      [0,0,0,0],
+      [0,0,0,2],
     ]);
 
     this.boardWidth = this.layout.get()[0].length;
@@ -64,10 +69,10 @@ export class Board {
   copyState(): string {
     return JSON.stringify({
       currentTurn: this.currentTurn.get(),
-      numWhiteLeft: this.numWhiteLeft.get(),
-      numBlackLeft: this.numBlackLeft.get(),
-      whiteKingAlive: this.whiteKingAlive.get(),
-      blackKingAlive: this.blackKingAlive.get(),
+      numWhiteLeft: this.numWhiteLeft,
+      numBlackLeft: this.numBlackLeft,
+      whiteKingAlive: this.whiteKingAlive,
+      blackKingAlive: this.blackKingAlive,
       winner: this.winner.get(),
       selectedPiece: this.selectedPiece.get(),
       layout: this.layout.get(),
@@ -89,10 +94,10 @@ export class Board {
     } = JSON.parse(state);
 
     this.currentTurn.set(currentTurn);
-    this.numWhiteLeft.set(numWhiteLeft);
-    this.numBlackLeft.set(numBlackLeft);
-    this.whiteKingAlive.set(whiteKingAlive);
-    this.blackKingAlive.set(blackKingAlive);
+    this.numWhiteLeft = numWhiteLeft;
+    this.numBlackLeft = numBlackLeft;
+    this.whiteKingAlive = whiteKingAlive;
+    this.blackKingAlive = blackKingAlive;
     this.winner.set(winner);
     this.selectedPiece.set(selectedPiece);
     this.layout.set(layout);
@@ -155,7 +160,7 @@ export class Board {
     this.numMovesNoCapture += 1;
 
     if (this.numMovesNoCapture == 50) {
-      if (this.blackKingAlive.get() >= this.whiteKingAlive.get()) {
+      if (this.numBlackLeft >= this.numWhiteLeft) {
         this.winner.set(2);
         this.winMessage.set(
           "50 moves and no capture. Your opponent wins this round with more (or equal) pieces!",
@@ -209,15 +214,15 @@ export class Board {
     }
 
     if (capturedPiece === 1) {
-      this.numWhiteLeft.set((prev) => prev - 1);
+      this.numWhiteLeft -= 1;
     } else {
-      this.numBlackLeft.set((prev) => prev - 1);
+      this.numBlackLeft -= 1;
     }
 
-    if (this.numBlackLeft.get() === 0) {
+    if (this.numBlackLeft === 0) {
       this.winner.set(1);
       this.winMessage.set("You captured all of your opponent's pawns. Well done!");
-    } else if (this.numWhiteLeft.get() === 0) {
+    } else if (this.numWhiteLeft === 0) {
       this.winner.set(2);
       this.winMessage.set("Your opponent captured all of your pawns. Unlucky...");
     }

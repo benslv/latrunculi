@@ -109,22 +109,22 @@ export class Minimax {
   }
 
   heuristic() {
-    if (this.board.numWhiteLeft.get() === 0) return Infinity;
-    if (this.board.numBlackLeft.get() === 0) return -Infinity;
+    if (this.board.numWhiteLeft === 0) return Infinity;
+    if (this.board.numBlackLeft === 0) return -Infinity;
 
-    if (this.board.whiteKingAlive.get() === false) return Infinity;
-    if (this.board.blackKingAlive.get() === false) return -Infinity;
+    if (this.board.whiteKingAlive === false) return Infinity;
+    if (this.board.blackKingAlive === false) return -Infinity;
 
     // return Math.PI * Math.atan(this.board.numWhiteLeft.get() - this.board.numBlackLeft.get());
-    return 10 * this.board.numBlackLeft.get() - this.board.numWhiteLeft.get();
+    return 10 * this.board.numBlackLeft - this.board.numWhiteLeft;
   }
 
   isEndState() {
     return (
-      this.board.numWhiteLeft.get() === 0 ||
-      this.board.numBlackLeft.get() === 0 ||
-      this.board.whiteKingAlive.get() === false ||
-      this.board.blackKingAlive.get() === false
+      this.board.numWhiteLeft === 0 ||
+      this.board.numBlackLeft === 0 ||
+      this.board.whiteKingAlive === false ||
+      this.board.blackKingAlive === false
     );
   }
 }
