@@ -53,11 +53,6 @@ export class Board {
       [1, 1, 1, 1, 1, 1, 1, 1],
     ]);
 
-    // this.layout = entity([
-    //   [1, 0],
-    //   [0, 2],
-    // ]);
-
     this.boardWidth = this.layout.get()[0].length;
     this.boardHeight = this.layout.get().length;
 
