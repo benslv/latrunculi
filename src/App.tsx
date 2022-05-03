@@ -19,6 +19,8 @@ import { Minimax } from "./utils/minimax";
 
 const startingDiffculty = 2;
 
+const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
+
 function App() {
   const [board, setBoard] = useState(new Board());
   const [minimax, setMinimax] = useState(new Minimax());
@@ -35,6 +37,8 @@ function App() {
   useEffect(() => {
     if (currentTurn === 2) {
       const { bestMove } = minimax.run(board.copyState(), aiDepth);
+
+      worker.postMessage([board.copyState(), aiDepth]);
 
       board.makeMove(bestMove);
     }
