@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"module": "ES6",
+		"moduleResolution": "node",
+		"baseUrl": "./",
+		"outDir": "../build/server",
+		"target": "es6",
+		"esModuleInterop": true,
+		"lib": ["es6"],
+		"allowJs": true,
+		"forceConsistentCasingInFileNames": true
+	},
+	"include": ["**.ts"],
+	"ts-node": { "esm": true }
+}
