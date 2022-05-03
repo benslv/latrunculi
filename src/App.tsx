@@ -27,7 +27,7 @@ function App() {
   const [modalOpened, setModalOpened] = useState(false);
 
   const winner = board.winner.use();
-  const winMessage = board.winMessage.use();
+  const winMessage = board.winMessage;
   const currentTurn = board.currentTurn.use();
   const numMoves = board.numMoves;
   const numMovesNoCapture = board.numMovesNoCapture;

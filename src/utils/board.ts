@@ -15,7 +15,7 @@ export class Board {
   whiteKingAlive: boolean;
   blackKingAlive: boolean;
   winner: Entity<number>;
-  winMessage: Entity<string>;
+  winMessage: string;
   selectedPiece: Entity<number[]>;
   layout: Entity<number[][]>;
   validMoves: Entity<string[]>;
@@ -29,14 +29,14 @@ export class Board {
 
     this.currentTurn = entity(1);
 
-    this.numWhiteLeft = 2;
+    this.numWhiteLeft = 3;
     this.numBlackLeft = 1;
 
     this.whiteKingAlive = true;
     this.blackKingAlive = true;
 
     this.winner = entity(0);
-    this.winMessage = entity("");
+    this.winMessage = "";
 
     this.selectedPiece = entity([-1, -1]);
 
@@ -55,7 +55,7 @@ export class Board {
       [1, 0, 0, 0],
       [0, 0, 0, 0],
       [0, 0, 1, 0],
-      [0, 0, 1, 2],
+      [2, 0, 1, 4],
     ]);
 
     this.boardWidth = this.layout.get()[0].length;
@@ -150,7 +150,11 @@ export class Board {
     this.numMoves += 1;
     this.numMovesNoCapture += 1;
 
-    this.checkForWinCondition(opponentVal);
+    const isWin = this.checkForWinCondition(opponentVal);
+
+    if (isWin) {
+      return;
+    }
 
     this.toggleTurn();
   }
@@ -162,53 +166,53 @@ export class Board {
 
     if (opponentVal === 2) {
       if (!this.blackKingAlive) {
+        this.winMessage = "You've captured your opponent's king!";
         this.winner.set(1);
-        this.winMessage.set("You've captured your opponent's king!");
-        return;
+        return true;
       }
 
       if (this.numBlackLeft === 0) {
+        this.winMessage = "You've captured all of your opponent's pawns!";
         this.winner.set(1);
-        this.winMessage.set("You've captured all of your opponent's pawns!");
-        return;
+        return true;
       }
     }
 
     if (opponentVal === 1) {
       if (!this.whiteKingAlive) {
+        this.winMessage = "Your king has been captured!";
         this.winner.set(2);
-        this.winMessage.set("Your king has been captured!");
-        return;
+        return true;
       }
 
       if (this.numWhiteLeft === 0) {
+        this.winMessage = "Your opponent captured all of your pawns!";
         this.winner.set(2);
-        this.winMessage.set("Your opponent captured all of your pawns!");
-        return;
+        return true;
       }
     }
 
     if (this.getAllValidMoves(opponentVal).length === 0) {
-      this.winMessage.set(
+      this.winMessage =
         opponentVal == 2
           ? "Black has no valid moves from this point, meaning you win!"
-          : "White has no valid moves from this point, meaning your opponent wins!",
-      );
-      return this.winner.set(this.currentTurn.get());
+          : "White has no valid moves from this point, meaning your opponent wins!";
+
+      this.winner.set(this.currentTurn.get());
+      return true;
     }
 
     if (this.numMovesNoCapture == 50) {
       if (this.numBlackLeft >= this.numWhiteLeft) {
         this.winner.set(2);
-        this.winMessage.set(
-          "50 moves and no capture. Your opponent wins this round with more (or equal) pieces!",
-        );
-        return;
+        this.winMessage =
+          "50 moves and no capture. Your opponent wins this round with more (or equal) pieces!";
+        return true;
       }
 
       this.winner.set(1);
-      this.winMessage.set("50 moves and no capture. You win this round with more pieces!");
-      return;
+      this.winMessage = "50 moves and no capture. You win this round with more pieces!";
+      return true;
     }
   }
 
