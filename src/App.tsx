@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
   Box,
   Button,
@@ -12,10 +14,9 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { hideNotification, showNotification } from "@mantine/notifications";
 
 import { GameBoard } from "./components/Board";
-
 import { Board } from "./utils/board";
 
 const startingDiffculty = 2;
@@ -27,7 +28,6 @@ function App() {
   const [history, setHistory] = useState<string>(localStorage.getItem("gameHistory") ?? "");
   const [aiDepth, setAiDepth] = useState(startingDiffculty);
   const [modalOpened, setModalOpened] = useState(false);
-  const [thinking, setThinking] = useState(false);
 
   const winner = board.winner.use();
   const winMessage = board.winMessage;
@@ -37,14 +37,22 @@ function App() {
 
   useEffect(() => {
     if (currentTurn === 2) {
-      setThinking(true);
+      showNotification({
+        id: "opponent-thinking",
+        disallowClose: true,
+        autoClose: false,
+        title: "AI is thinking...",
+        message: "Your opponent is thinking. Please wait...",
+        loading: true,
+      });
+
       worker.postMessage([board.copyState(), aiDepth]);
 
       worker.addEventListener("message", function handleMove(e) {
         const bestMove = e.data;
         board.makeMove(bestMove);
 
-        setThinking(false);
+        hideNotification("opponent-thinking");
 
         worker.removeEventListener("message", handleMove);
       });
@@ -180,7 +188,6 @@ function App() {
           <Center>
             <Stack>
               <Box sx={{ position: "relative" }}>
-                <LoadingOverlay visible={thinking} />
                 <GameBoard board={board} />
               </Box>
               <Text>Moves so far: {numMoves}</Text>
