@@ -29,8 +29,8 @@ export class Board {
 
     this.currentTurn = entity(1);
 
-    this.numWhiteLeft = 4;
-    this.numBlackLeft = 4;
+    this.numWhiteLeft = 2;
+    this.numBlackLeft = 1;
 
     this.whiteKingAlive = true;
     this.blackKingAlive = true;
@@ -54,8 +54,8 @@ export class Board {
     this.layout = entity([
       [1, 0, 0, 0],
       [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 2],
+      [0, 0, 1, 0],
+      [0, 0, 1, 2],
     ]);
 
     this.boardWidth = this.layout.get()[0].length;
