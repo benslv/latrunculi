@@ -19,7 +19,7 @@ const Wrapper = styled.div<PieceProps>`
 
   box-shadow: 0 5px 10px #424242;
 
-  cursor: ${({ currentTurn, val }) => (val === currentTurn ? "pointer" : "not-allowed")};
+  cursor: ${({ currentTurn, val }) => (val === 1 && currentTurn == 1 ? "pointer" : "not-allowed")};
 `;
 
 export const Piece = (props: PieceProps) => {
@@ -30,7 +30,7 @@ export const Piece = (props: PieceProps) => {
   const selectedPiece = board.selectedPiece.use();
 
   const handlePieceClick = () => {
-    if (val !== currentTurn || winner !== 0) return;
+    if (currentTurn !== 1 || val !== 1 || winner !== 0) return;
 
     if (selectedPiece[0] === row && selectedPiece[1] === col) {
       board.setSelectedPiece([-1, -1]);

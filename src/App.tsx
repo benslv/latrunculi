@@ -1,9 +1,11 @@
 import {
+  Box,
   Button,
   Center,
   Container,
   Grid,
   List,
+  LoadingOverlay,
   Modal,
   Space,
   Stack,
@@ -18,7 +20,7 @@ import { Board } from "./utils/board";
 
 const startingDiffculty = 2;
 
-const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "classic" });
+const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
 
 function App() {
   const [board, setBoard] = useState(new Board());
@@ -35,12 +37,14 @@ function App() {
 
   useEffect(() => {
     if (currentTurn === 2) {
+      setThinking(true);
       worker.postMessage([board.copyState(), aiDepth]);
 
       worker.addEventListener("message", function handleMove(e) {
         const bestMove = e.data;
 
         board.makeMove(bestMove);
+        setThinking(false);
 
         worker.removeEventListener("message", handleMove);
       });
@@ -65,8 +69,8 @@ function App() {
 
     const calcDiffculty = Math.floor(startingDiffculty + wins - losses);
 
-    const minDifficulty = 5;
-    const maxDifficulty = 5;
+    const minDifficulty = 1;
+    const maxDifficulty = 4;
 
     const newDifficulty = Math.max(Math.min(maxDifficulty, calcDiffculty), minDifficulty);
 
@@ -175,9 +179,13 @@ function App() {
         <Grid.Col sm={12} lg={7}>
           <Center>
             <Stack>
-              <GameBoard board={board} />
+              <Box sx={{ position: "relative" }}>
+                <LoadingOverlay visible={thinking} />
+                <GameBoard board={board} />
+              </Box>
               <Text>Moves so far: {numMoves}</Text>
               <Text>Moves without capture: {numMovesNoCapture}</Text>
+              <Text>Current turn: {currentTurn}</Text>
             </Stack>
           </Center>
         </Grid.Col>
