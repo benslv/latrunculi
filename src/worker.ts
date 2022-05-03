@@ -7,7 +7,5 @@ self.onmessage = (event) => {
 
   const { bestMove } = minimax.run(state, depth);
 
-  console.log(bestMove);
-
-  self.postMessage("hello");
+  self.postMessage(bestMove);
 };

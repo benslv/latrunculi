@@ -19,14 +19,14 @@ import { Minimax } from "./utils/minimax";
 
 const startingDiffculty = 2;
 
-const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
+const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "classic" });
 
 function App() {
   const [board, setBoard] = useState(new Board());
-  const [minimax, setMinimax] = useState(new Minimax());
   const [history, setHistory] = useState<string>(localStorage.getItem("gameHistory") ?? "");
   const [aiDepth, setAiDepth] = useState(startingDiffculty);
   const [modalOpened, setModalOpened] = useState(false);
+  const [thinking, setThinking] = useState(false);
 
   const winner = board.winner.use();
   const winMessage = board.winMessage;
@@ -36,11 +36,15 @@ function App() {
 
   useEffect(() => {
     if (currentTurn === 2) {
-      const { bestMove } = minimax.run(board.copyState(), aiDepth);
-
       worker.postMessage([board.copyState(), aiDepth]);
 
-      board.makeMove(bestMove);
+      worker.addEventListener("message", function handleMove(e) {
+        const bestMove = e.data;
+
+        board.makeMove(bestMove);
+
+        worker.removeEventListener("message", handleMove);
+      });
     }
   }, [currentTurn]);
 
@@ -62,8 +66,8 @@ function App() {
 
     const calcDiffculty = Math.floor(startingDiffculty + wins - losses);
 
-    const minDifficulty = 1;
-    const maxDifficulty = 4;
+    const minDifficulty = 5;
+    const maxDifficulty = 5;
 
     const newDifficulty = Math.max(Math.min(maxDifficulty, calcDiffculty), minDifficulty);
 
