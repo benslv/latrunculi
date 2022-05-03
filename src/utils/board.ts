@@ -1,5 +1,6 @@
 import { entity, Entity } from "simpler-state";
 import rfdc from "rfdc";
+import countBy from "lodash.countby";
 
 export type Move = {
   start: number[];
@@ -29,9 +30,6 @@ export class Board {
 
     this.currentTurn = entity(1);
 
-    this.numWhiteLeft = 3;
-    this.numBlackLeft = 1;
-
     this.whiteKingAlive = true;
     this.blackKingAlive = true;
 
@@ -57,6 +55,11 @@ export class Board {
       [0, 0, 1, 0],
       [2, 0, 1, 4],
     ]);
+
+    const pieceCounts = countBy(this.layout.get().flat());
+
+    this.numWhiteLeft = pieceCounts[1];
+    this.numBlackLeft = pieceCounts[2];
 
     this.boardWidth = this.layout.get()[0].length;
     this.boardHeight = this.layout.get().length;
