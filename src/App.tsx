@@ -43,7 +43,7 @@ function App() {
       worker.addEventListener("message", function handleMove(e) {
         const bestMove = e.data;
         board.makeMove(bestMove);
-        
+
         setThinking(false);
 
         worker.removeEventListener("message", handleMove);
