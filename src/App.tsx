@@ -79,7 +79,6 @@ function App() {
 
   const reset = () => {
     setBoard(new Board());
-    setMinimax(new Minimax());
   };
 
   return (
