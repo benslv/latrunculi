@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import { GameBoard } from "./components/Board";
 
 import { Board } from "./utils/board";
-import { Minimax } from "./utils/minimax";
 
 const startingDiffculty = 2;
 
@@ -79,7 +78,6 @@ function App() {
 
   const reset = () => {
     setBoard(new Board());
-    setMinimax(new Minimax());
   };
 
   return (
