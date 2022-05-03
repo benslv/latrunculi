@@ -1,8 +1,7 @@
 {
-  "name": "vite-latrunculi",
-  "homepage": "https://benslv.github.io/react-latrunculi",
+  "name": "latrunculi",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "engines": {
     "node": "16.10.0",
     "npm": "8.4.0"
